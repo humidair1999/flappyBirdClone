@@ -27,13 +27,17 @@ function(	_,
 		var gameScene = new GameScene();
 
 		gameScene.attachAssets().then(function() {
+			return gameScene.startTicker();
+		}).then(function() {
 			gameScene.render();
+		}, function() {
+			console.log('failed');
 		});
 	};
 
 	// create the canvas and cache some references to its metrics
-    FLAPPYSONIC.canvas = document.getElementById('gameCanvas'),
-	FLAPPYSONIC.canvasWidth = FLAPPYSONIC.canvas.offsetWidth,
+    FLAPPYSONIC.canvas = document.getElementById('gameCanvas');
+	FLAPPYSONIC.canvasWidth = FLAPPYSONIC.canvas.offsetWidth;
 	FLAPPYSONIC.canvasHeight = FLAPPYSONIC.canvas.offsetHeight;
 
 	// create the createjs stage

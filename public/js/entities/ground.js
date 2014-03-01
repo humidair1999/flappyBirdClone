@@ -7,11 +7,14 @@ function(	_,
 
 	'use strict';
 
-	var Clouds = function(xPos) {
+	var Ground = function(xPos) {
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
 		this.x = xPos;
-		this.y = 0;
+		this.y = (FLAPPYSONIC.canvasHeight - this.height);
+
+		console.log(this.width);
+		console.log(this.x);
 	};
 
 	// don't have to override prototype because it's not an actual
@@ -26,8 +29,18 @@ function(	_,
 
 	// TODO: why can't I proxy the fucking initialize() method here?
 
-	Clouds.prototype = new createjs.Bitmap(FLAPPYSONIC.loadQueue.getResult('clouds'));
+	Ground.prototype = new createjs.Bitmap(FLAPPYSONIC.loadQueue.getResult('floor'));
+
+	Ground.prototype.move = function(deltaPerSecond, oppositeGroundXPos) {
+		if (this.x <= -this.width){
+		    this.x = (oppositeGroundXPos + this.width) - 4;
+		}
+		else {
+			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
+			this.x -= (deltaPerSecond * 40);
+		}
+	};
  
-	return Clouds;
+	return Ground;
 
 });
