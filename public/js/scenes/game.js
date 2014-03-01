@@ -19,7 +19,7 @@ function(	_,
 
 		// TODO: use pubsub to make sonic fly
 
-		//canvas.addEventListener("click", flyUp);
+		//FLAPPYSONIC.canvas.addEventListener("click", flyUp);
 	};
 
 	GameScene.prototype.attachAssets = function() {
@@ -28,14 +28,19 @@ function(	_,
 
 		// TODO: would be sweet to not have to load the assets separately like this
 		require([	'backdrops/clouds',
-					'entities/ground'],
+					'entities/ground',
+					'entities/sonic'],
 		function(	Clouds,
-					Ground) {
+					Ground,
+					Sonic) {
+
 			that.clouds1 = new Clouds(0);
 			that.clouds2 = new Clouds(that.clouds1.width);
 
 			that.ground1 = new Ground(0);
 			that.ground2 = new Ground(that.ground1.width);
+
+			that.sonic = new Sonic(30);
 
 			deferred.resolve();
 		});
@@ -63,7 +68,7 @@ function(	_,
 	};
 
 	GameScene.prototype.render = function() {
-		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2);
+		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.sonic);
 
 		FLAPPYSONIC.stage.update();
 	};
