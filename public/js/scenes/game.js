@@ -16,10 +16,6 @@ function(	_,
 
 	GameScene.prototype.initialize = function() {
 		console.log('init game');
-
-		// TODO: use pubsub to make sonic fly
-
-		//FLAPPYSONIC.canvas.addEventListener("click", flyUp);
 	};
 
 	GameScene.prototype.attachAssets = function() {
@@ -40,7 +36,7 @@ function(	_,
 			that.ground1 = new Ground(0);
 			that.ground2 = new Ground(that.ground1.width);
 
-			that.sonic = new Sonic(30);
+			that.sonic = new Sonic();
 
 			deferred.resolve();
 		});
@@ -48,13 +44,23 @@ function(	_,
 		return deferred.promise;
 	};
 
+	GameScene.prototype.attachListeners = function() {
+		var deferred = when.defer();
+
+		FLAPPYSONIC.canvas.addEventListener('click', this.sonic.flyUp);
+
+		deferred.resolve();
+
+		return deferred.promise;
+	};
+
 	GameScene.prototype.startTicker = function() {
 		var deferred = when.defer();
 
-		if (!createjs.Ticker.hasEventListener("tick")) {
+		if (!createjs.Ticker.hasEventListener('tick')) {
 			var tickProxy = createjs.proxy(this.tick, this);
 
-		    createjs.Ticker.addEventListener("tick", tickProxy);
+		    createjs.Ticker.addEventListener('tick', tickProxy);
 		    createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED;
 			createjs.Ticker.setFPS(30);
 
@@ -98,6 +104,8 @@ function(	_,
 
 			this.ground1.move(deltaPerSecond, this.ground2.x);
 			this.ground2.move(deltaPerSecond, this.ground1.x);
+
+			this.sonic.glideDown(deltaPerSecond);
 
 			FLAPPYSONIC.stage.update(evt);
 		}

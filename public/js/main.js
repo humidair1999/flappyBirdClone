@@ -27,11 +27,13 @@ function(	_,
 		var gameScene = new GameScene();
 
 		gameScene.attachAssets().then(function() {
+			return gameScene.attachListeners();
+		}).then(function() {
 			return gameScene.startTicker();
 		}).then(function() {
 			gameScene.render();
 		}, function() {
-			console.log('failed');
+			console.log('something failed');
 		});
 	};
 
@@ -51,6 +53,7 @@ function(	_,
 
 	// TODO: an actual title screen would be cool
 
+	// TODO: use deferred instead of chaining?
 	loadingScene.render().loadAssets().then(function() {
 		FLAPPYSONIC.canvas.addEventListener('click', initializeGame);
 	}, function(errorMsg) {

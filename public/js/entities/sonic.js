@@ -7,21 +7,21 @@ function(	_,
 
 	'use strict';
 
-	var sonicImage = FLAPPYSONIC.loadQueue.getResult("sonic");
+	var sonicImage = FLAPPYSONIC.loadQueue.getResult('sonic');
 
 	var dataSonic = new createjs.SpriteSheet({
-		"images": [sonicImage],
-		"frames": {
-			"width": 64,
-			"height": 64,
-			"regX": 0,
-			"regY": 0,
-			"count": 9
+		'images': [sonicImage],
+		'frames': {
+			'width': 64,
+			'height': 64,
+			'regX': 0,
+			'regY': 0,
+			'count': 9
 		},
-		"animations": {
-			"up": [0, 2, "up"],
-			"straight": [3, 5, "straight"],
-			"down": [6, 8, "down"]
+		'animations': {
+			'up': [0, 2, 'up'],
+			'straight': [3, 5, 'straight'],
+			'down': [6, 8, 'down']
 		}
 	});
 
@@ -49,7 +49,15 @@ function(	_,
 
 	// TODO: why can't I proxy the fucking initialize() method here?
 
-	Sonic.prototype = new createjs.Sprite(dataSonic, "straight");
+	Sonic.prototype = new createjs.Sprite(dataSonic, 'straight');
+
+	Sonic.prototype.glideDown = function(deltaPerSecond) {
+		this.y += deltaPerSecond * 5;
+	};
+
+	Sonic.prototype.flyUp = function() {
+		console.log('fly');
+	};
  
 	return Sonic;
 

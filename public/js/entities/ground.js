@@ -12,9 +12,6 @@ function(	_,
 		this.height = this.getBounds().height;
 		this.x = xPos;
 		this.y = (FLAPPYSONIC.canvasHeight - this.height);
-
-		console.log(this.width);
-		console.log(this.x);
 	};
 
 	// don't have to override prototype because it's not an actual
@@ -37,7 +34,7 @@ function(	_,
 		}
 		else {
 			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
-			this.x -= (deltaPerSecond * 40);
+			this.x -= deltaPerSecond * 40;
 		}
 	};
  
