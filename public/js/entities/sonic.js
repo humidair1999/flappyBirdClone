@@ -52,14 +52,16 @@ function(	_,
 		this.y += deltaPerSecond * 20;
 	};
 
-	Sonic.prototype.flyUp = function() {
-		this.gotoAndPlay('up');
+	Sonic.prototype.flyUp = function(evt) {
+		if (!createjs.Ticker.getPaused()) {
+			this.gotoAndPlay('up');
 
-		createjs.Tween.get(this, { override: true })
-			.to({ y: (this.y - 70) }, 700, createjs.Ease.cubicInOut)
-			.call(function() {
-				this.gotoAndPlay('down');
-			});
+			createjs.Tween.get(this, { override: true })
+				.to({ y: (this.y - 70) }, 700, createjs.Ease.cubicInOut)
+				.call(function() {
+					this.gotoAndPlay('down');
+				});
+		}
 	};
  
 	return Sonic;

@@ -8,6 +8,9 @@ function(	_,
 	'use strict';
 
 	var GameScene = function() {
+		// define an empty hash for ui buttons and controls
+		this.ui = {};
+
 		this.initialize();
 	};
 
@@ -25,10 +28,12 @@ function(	_,
 		// TODO: would be sweet to not have to load the assets separately like this
 		require([	'backdrops/clouds',
 					'entities/ground',
-					'entities/sonic'],
+					'entities/sonic',
+					'ui/pause-button'],
 		function(	Clouds,
 					Ground,
-					Sonic) {
+					Sonic,
+					PauseButton) {
 
 			that.clouds1 = new Clouds(0);
 			that.clouds2 = new Clouds(that.clouds1.width);
@@ -37,6 +42,8 @@ function(	_,
 			that.ground2 = new Ground(that.ground1.width);
 
 			that.sonic = new Sonic();
+
+			that.ui.pauseButton = new PauseButton();
 
 			deferred.resolve();
 		});
@@ -49,6 +56,9 @@ function(	_,
 
 		var flyUpProxy = createjs.proxy(this.sonic.flyUp, this.sonic);
 		FLAPPYSONIC.canvas.addEventListener('click', flyUpProxy);
+
+		var togglePauseProxy = createjs.proxy(this.ui.pauseButton.togglePause, this.ui.pauseButton);
+		this.ui.pauseButton.addEventListener('click', togglePauseProxy);
 
 		deferred.resolve();
 
@@ -75,7 +85,7 @@ function(	_,
 	};
 
 	GameScene.prototype.render = function() {
-		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.sonic);
+		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.sonic, this.ui.pauseButton);
 
 		FLAPPYSONIC.stage.update();
 	};
