@@ -26,7 +26,7 @@ function(	_,
 	var Enemy = function() {
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
-		this.x = 350;
+		this.x = 250;
 		this.y = 50;
 
 		this.framerate = Math.floor((Math.random() * 8) + 1);

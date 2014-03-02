@@ -124,6 +124,22 @@ function(	_,
 
 			this.enemy.move(deltaPerSecond);
 
+			// right-side collision: if sonic is past the right edge of the enemy,
+			if (this.sonic.x >= this.enemy.x + this.enemy.width ||
+				// left-side collision: if sonic is past the left edge of the enemy,
+				this.sonic.x + this.sonic.width <= this.enemy.x ||
+				// bottom collision: if sonic is underneath the enemy,
+				this.sonic.y >= this.enemy.y + this.enemy.height ||
+				// and top collision: if sonic is above the enemy
+				this.sonic.y + this.sonic.height <= this.enemy.y ) {
+				console.log('no collision');
+			}
+			else {
+				console.log('collision occurred');
+
+				this.sonic.die();
+			}
+
 			FLAPPYSONIC.stage.update(evt);
 		}
 	};

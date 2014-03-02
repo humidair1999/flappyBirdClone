@@ -32,6 +32,8 @@ function(	_,
 		this.y = 50;
 
 		this.framerate = 2;
+
+		this.isAlive = true;
 	};
 
 	// don't have to override prototype because it's not an actual
@@ -72,6 +74,16 @@ function(	_,
 				});
 		}
 	};
+
+	Sonic.prototype.die = _.once(function() {
+		console.log('die fired');
+
+		if (this.isAlive) {
+			this.isAlive = false;
+
+			console.log('dead');
+		}
+	});
  
 	return Sonic;
 
