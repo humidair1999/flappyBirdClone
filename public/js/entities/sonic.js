@@ -46,18 +46,27 @@ function(	_,
 
 	// TODO: why can't I proxy the fucking initialize() method here?
 
-	Sonic.prototype = new createjs.Sprite(dataSonic, 'down');
+	Sonic.prototype = new createjs.Sprite(dataSonic, 'straight');
 
 	Sonic.prototype.glideDown = function(deltaPerSecond) {
 		this.y += deltaPerSecond * 20;
 	};
 
 	Sonic.prototype.flyUp = function(evt) {
+		var that = this;
+
 		if (!createjs.Ticker.getPaused()) {
 			this.gotoAndPlay('up');
 
 			createjs.Tween.get(this, { override: true })
-				.to({ y: (this.y - 70) }, 700, createjs.Ease.cubicInOut)
+				.to({ y: (function() {
+					if (that.y <= 70) {
+						return 0;
+					}
+					else {
+						return that.y - 70;
+					}
+				})()}, 700, createjs.Ease.cubicInOut)
 				.call(function() {
 					this.gotoAndPlay('down');
 				});

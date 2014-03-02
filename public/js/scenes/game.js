@@ -29,10 +29,12 @@ function(	_,
 		require([	'backdrops/clouds',
 					'entities/ground',
 					'entities/sonic',
+					'entities/enemy',
 					'ui/pause-button'],
 		function(	Clouds,
 					Ground,
 					Sonic,
+					Enemy,
 					PauseButton) {
 
 			that.clouds1 = new Clouds(0);
@@ -42,6 +44,8 @@ function(	_,
 			that.ground2 = new Ground(that.ground1.width);
 
 			that.sonic = new Sonic();
+
+			that.enemy = new Enemy();
 
 			that.ui.pauseButton = new PauseButton();
 
@@ -85,7 +89,7 @@ function(	_,
 	};
 
 	GameScene.prototype.render = function() {
-		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.sonic, this.ui.pauseButton);
+		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.enemy, this.sonic, this.ui.pauseButton);
 
 		FLAPPYSONIC.stage.update();
 	};
@@ -117,6 +121,8 @@ function(	_,
 			this.ground2.move(deltaPerSecond, this.ground1.x);
 
 			this.sonic.glideDown(deltaPerSecond);
+
+			this.enemy.move(deltaPerSecond);
 
 			FLAPPYSONIC.stage.update(evt);
 		}
