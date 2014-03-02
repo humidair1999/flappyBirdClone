@@ -47,7 +47,8 @@ function(	_,
 	GameScene.prototype.attachListeners = function() {
 		var deferred = when.defer();
 
-		FLAPPYSONIC.canvas.addEventListener('click', this.sonic.flyUp);
+		var flyUpProxy = createjs.proxy(this.sonic.flyUp, this.sonic);
+		FLAPPYSONIC.canvas.addEventListener('click', flyUpProxy);
 
 		deferred.resolve();
 

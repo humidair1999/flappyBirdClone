@@ -32,9 +32,6 @@ function(	_,
 		this.y = 50;
 
 		this.framerate = 2;
-
-		console.log(this.width);
-		console.log(this.x);
 	};
 
 	// don't have to override prototype because it's not an actual
@@ -49,14 +46,20 @@ function(	_,
 
 	// TODO: why can't I proxy the fucking initialize() method here?
 
-	Sonic.prototype = new createjs.Sprite(dataSonic, 'straight');
+	Sonic.prototype = new createjs.Sprite(dataSonic, 'down');
 
 	Sonic.prototype.glideDown = function(deltaPerSecond) {
-		this.y += deltaPerSecond * 5;
+		this.y += deltaPerSecond * 20;
 	};
 
 	Sonic.prototype.flyUp = function() {
-		console.log('fly');
+		this.gotoAndPlay('up');
+
+		createjs.Tween.get(this)
+			.to({ y: (this.y - 70) }, 700, createjs.Ease.cubicInOut)
+			.call(function() {
+				this.gotoAndPlay('down');
+			});
 	};
  
 	return Sonic;
