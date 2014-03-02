@@ -46,6 +46,10 @@ function(	_,
 			    	src: 'img/sonic.png'
 			    },
 			    {
+			    	id: 'sonicDead',
+			    	src: 'img/sonicdeath.png'
+			    },
+			    {
 			    	id: 'enemy',
 			    	src: 'img/enemy.png'
 			    }

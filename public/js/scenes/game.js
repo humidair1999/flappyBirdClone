@@ -29,11 +29,13 @@ function(	_,
 		require([	'backdrops/clouds',
 					'entities/ground',
 					'entities/sonic',
+					'entities/dead-sonic',
 					'entities/enemy',
 					'ui/pause-button'],
 		function(	Clouds,
 					Ground,
 					Sonic,
+					DeadSonic,
 					Enemy,
 					PauseButton) {
 
@@ -44,6 +46,7 @@ function(	_,
 			that.ground2 = new Ground(that.ground1.width);
 
 			that.sonic = new Sonic();
+			that.deadSonic = new DeadSonic(that.sonic.x, that.sonic.y);
 
 			that.enemy = new Enemy();
 
@@ -94,6 +97,20 @@ function(	_,
 		FLAPPYSONIC.stage.update();
 	};
 
+	// dead sonic only needs to ever be rendered once, so utilize the render as a singleton
+	GameScene.prototype.renderDeadSonic = _.once(function() {
+		var deferred = when.defer();
+
+		this.deadSonic.x = this.sonic.x + 10;
+		this.deadSonic.y = this.sonic.y - 10;
+
+		FLAPPYSONIC.stage.addChildAt(this.deadSonic, (FLAPPYSONIC.stage.getChildIndex(this.sonic) + 1));
+
+		deferred.resolve(this.deadSonic);
+
+		return deferred.promise;
+	});
+
 	GameScene.prototype.moveClouds = function(deltaPerSecond) {
 		if (this.clouds1.x <= -this.clouds1.width){
 		    this.clouds1.x = this.clouds2.x + this.clouds1.width;
@@ -138,6 +155,10 @@ function(	_,
 				console.log('collision occurred');
 
 				this.sonic.die();
+
+				this.renderDeadSonic().then(function(deadSonic) {
+					deadSonic.plummet();
+				});
 			}
 
 			FLAPPYSONIC.stage.update(evt);

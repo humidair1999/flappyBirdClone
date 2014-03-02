@@ -16,12 +16,13 @@ function(	_,
 			'height': 64,
 			'regX': 0,
 			'regY': 0,
-			'count': 9
+			'count': 12
 		},
 		'animations': {
 			'up': [0, 2, 'up'],
 			'straight': [3, 5, 'straight'],
-			'down': [6, 8, 'down']
+			'down': [6, 8, 'down'],
+			'empty': [9, 11, 'empty']
 		}
 	});
 
@@ -32,8 +33,6 @@ function(	_,
 		this.y = 50;
 
 		this.framerate = 2;
-
-		this.isAlive = true;
 	};
 
 	// don't have to override prototype because it's not an actual
@@ -75,14 +74,11 @@ function(	_,
 		}
 	};
 
+	// Sonic can only ever die once, so let's utilize the die() method as a singleton
 	Sonic.prototype.die = _.once(function() {
-		console.log('die fired');
+		console.log('dead');
 
-		if (this.isAlive) {
-			this.isAlive = false;
-
-			console.log('dead');
-		}
+		this.gotoAndPlay('empty');
 	});
  
 	return Sonic;
