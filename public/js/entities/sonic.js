@@ -55,7 +55,7 @@ function(	_,
 	Sonic.prototype.flyUp = function() {
 		this.gotoAndPlay('up');
 
-		createjs.Tween.get(this)
+		createjs.Tween.get(this, { override: true })
 			.to({ y: (this.y - 70) }, 700, createjs.Ease.cubicInOut)
 			.call(function() {
 				this.gotoAndPlay('down');
