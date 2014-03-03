@@ -48,6 +48,8 @@ function(	_,
 	DeadSonic.prototype = new createjs.Sprite(dataDeadSonic, 'jump');
 
 	DeadSonic.prototype.plummet = _.once(function() {
+		var deferred = when.defer();
+
 		console.log('plummet');
 
 		if (!createjs.Ticker.getPaused()) {
@@ -55,10 +57,13 @@ function(	_,
 				.to({ y: (this.y - 40) }, 300, createjs.Ease.getPowIn(2.2))
 				.wait(300)
 				.to({ y: FLAPPYSONIC.canvasHeight }, 800, createjs.Ease.cubicInOut)
+				.wait(500)
 				.call(function() {
-					console.log('animation done');
+					deferred.resolve();
 				});
 		}
+
+		return deferred.promise;
 	});
  
 	return DeadSonic;

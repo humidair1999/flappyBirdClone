@@ -58,18 +58,39 @@ function(	_,
 		return deferred.promise;
 	};
 
+	// cache a reference to these proxied listeners so that both the attachers and removers have access
+	//	to the exact same proxies
+	GameScene.prototype.generateListenerProxies = _.memoize(function() {
+		return {
+			flyUpProxy: createjs.proxy(this.sonic.flyUp, this.sonic),
+			togglePauseProxy: createjs.proxy(this.ui.pauseButton.togglePause, this.ui.pauseButton)
+		};
+	});
+
 	GameScene.prototype.attachListeners = function() {
-		var deferred = when.defer();
+		var listenerProxies = this.generateListenerProxies(),
+			deferred = when.defer();
 
-		var flyUpProxy = createjs.proxy(this.sonic.flyUp, this.sonic);
-		FLAPPYSONIC.canvas.addEventListener('click', flyUpProxy);
+		console.log(listenerProxies);
 
-		var togglePauseProxy = createjs.proxy(this.ui.pauseButton.togglePause, this.ui.pauseButton);
-		this.ui.pauseButton.addEventListener('click', togglePauseProxy);
+		FLAPPYSONIC.canvas.addEventListener('click', listenerProxies.flyUpProxy);
+
+		this.ui.pauseButton.addEventListener('click', listenerProxies.togglePauseProxy);
 
 		deferred.resolve();
 
 		return deferred.promise;
+	};
+
+	GameScene.prototype.removeListeners = function() {
+		var listenerProxies = this.generateListenerProxies();
+
+		console.log(FLAPPYSONIC.canvas);
+
+		FLAPPYSONIC.canvas.removeEventListener('click', listenerProxies.flyUpProxy);
+
+		// TODO: need to remove event for pause button?
+		//this.ui.pauseButton.removeEventListener('click', listenerProxies.togglePauseProxy);
 	};
 
 	GameScene.prototype.startTicker = function() {
@@ -106,7 +127,7 @@ function(	_,
 
 		FLAPPYSONIC.stage.addChildAt(this.deadSonic, (FLAPPYSONIC.stage.getChildIndex(this.sonic) + 1));
 
-		deferred.resolve(this.deadSonic);
+		deferred.resolve();
 
 		return deferred.promise;
 	});
@@ -128,8 +149,23 @@ function(	_,
 		}
 	};
 
+	GameScene.prototype.handleDeath = _.once(function() {
+		var that = this;
+
+		this.removeListeners();
+
+		this.sonic.die();
+
+		this.renderDeadSonic().then(function(deadSonic) {
+			return that.deadSonic.plummet();
+		}).then(function() {
+			that.endScene();
+		});
+	});
+
 	GameScene.prototype.tick = function(evt) {
-		var deltaPerSecond = evt.delta / 1000;
+		var that = this,
+			deltaPerSecond = evt.delta / 1000;
 
 		if (!createjs.Ticker.getPaused()) {
 			this.moveClouds(deltaPerSecond);
@@ -142,22 +178,20 @@ function(	_,
 			this.enemy.move(deltaPerSecond);
 
 			// intentionally slow the rate at which collisions are checked; again, for performance reasons
-			// time divided by change in time is evenly divisible by factor of 10
+			// time divided by change in time is evenly divisible by factor of 5
 			if (Math.floor(evt.time / evt.delta % 5) === 0) {
-				console.log(this.enemy.checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height));
+				if (this.enemy.checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height)) {
+					this.handleDeath();
+				}
 			}
-
-			//console.log(this.enemy.checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height));
-
-			// this.sonic.die();
-
-			// this.renderDeadSonic().then(function(deadSonic) {
-			// 	deadSonic.plummet();
-			// });
 
 			FLAPPYSONIC.stage.update(evt);
 		}
 	};
+
+	GameScene.prototype.endScene = _.once(function() {
+		console.log('game over');
+	});
  
 	return GameScene;
 
