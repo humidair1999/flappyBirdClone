@@ -23,7 +23,8 @@ function(	_,
 
 	GameScene.prototype.attachAssets = function() {
 		var deferred = when.defer(),
-			that = this;
+			that = this,
+			enemies = [];
 
 		// TODO: would be sweet to not have to load the assets separately like this
 		require([	'backdrops/clouds',
@@ -48,7 +49,15 @@ function(	_,
 			that.sonic = new Sonic();
 			that.deadSonic = new DeadSonic(that.sonic.x, that.sonic.y);
 
-			that.enemy = new Enemy();
+			for (var i = 0; i < 3; i++) {
+				enemies[i] = new Enemy();
+
+				enemies[i].x = (40 * i) + 300;
+			}
+
+			that.enemies = enemies;
+
+			console.log(that.enemies);
 
 			that.ui.pauseButton = new PauseButton();
 
@@ -117,7 +126,11 @@ function(	_,
 	};
 
 	GameScene.prototype.render = function() {
-		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.enemy, this.sonic, this.ui.pauseButton, this.ui.barrierWall);
+		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.sonic, this.ui.pauseButton, this.ui.barrierWall);
+
+		for (var i = 0; i < this.enemies.length; i++) {
+			FLAPPYSONIC.stage.addChildAt(this.enemies[i], (FLAPPYSONIC.stage.getChildIndex(this.ground2) + (i + 1)));
+		}
 
 		FLAPPYSONIC.stage.update();
 	};
@@ -179,13 +192,17 @@ function(	_,
 
 			this.sonic.glideDown(deltaPerSecond);
 
-			this.enemy.move(deltaPerSecond);
+			for (var i = 0; i < this.enemies.length; i++) {
+				this.enemies[i].move(deltaPerSecond);
+			}
 
 			// intentionally slow the rate at which collisions are checked; again, for performance reasons
 			// time divided by change in time is evenly divisible by factor of 5
 			if (Math.floor(evt.time / evt.delta % 5) === 0) {
-				if (this.enemy.checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height)) {
-					this.handleDeath();
+				for (var j = 0; j < this.enemies.length; j++) {
+					if (this.enemies[j].checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height)) {
+						this.handleDeath();
+					}
 				}
 			}
 
