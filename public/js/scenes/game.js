@@ -141,25 +141,19 @@ function(	_,
 
 			this.enemy.move(deltaPerSecond);
 
-			// right-side collision: if sonic is past the right edge of the enemy,
-			if (this.sonic.x >= this.enemy.x + this.enemy.width ||
-				// left-side collision: if sonic is past the left edge of the enemy,
-				this.sonic.x + this.sonic.width <= this.enemy.x ||
-				// bottom collision: if sonic is underneath the enemy,
-				this.sonic.y >= this.enemy.y + this.enemy.height ||
-				// and top collision: if sonic is above the enemy
-				this.sonic.y + this.sonic.height <= this.enemy.y ) {
-				console.log('no collision');
+			// intentionally slow the rate at which collisions are checked; again, for performance reasons
+			// time divided by change in time is evenly divisible by factor of 10
+			if (Math.floor(evt.time / evt.delta % 5) === 0) {
+				console.log(this.enemy.checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height));
 			}
-			else {
-				console.log('collision occurred');
 
-				this.sonic.die();
+			//console.log(this.enemy.checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height));
 
-				this.renderDeadSonic().then(function(deadSonic) {
-					deadSonic.plummet();
-				});
-			}
+			// this.sonic.die();
+
+			// this.renderDeadSonic().then(function(deadSonic) {
+			// 	deadSonic.plummet();
+			// });
 
 			FLAPPYSONIC.stage.update(evt);
 		}

@@ -29,6 +29,8 @@ function(	_,
 		this.x = 200;
 		this.y = 50;
 
+		// TODO: give enemy some sort of more accurate hitbox?
+
 		this.framerate = Math.floor((Math.random() * 8) + 1);
 	};
 
@@ -48,6 +50,22 @@ function(	_,
 
 	Enemy.prototype.move = function(deltaPerSecond) {
 		this.x -= deltaPerSecond * 40;
+	};
+
+	Enemy.prototype.checkCollision = function(sonicXPos, sonicWidth, sonicYPos, sonicHeight) {
+		// right-side collision: if sonic is past the right edge of the enemy,
+		if (sonicXPos >= this.x + this.width ||
+			// left-side collision: if sonic is past the left edge of the enemy,
+			sonicXPos + sonicWidth <= this.x ||
+			// bottom collision: if sonic is underneath the enemy,
+			sonicYPos >= this.y + this.height ||
+			// and top collision: if sonic is above the enemy
+			sonicYPos + sonicHeight <= this.y ) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	};
  
 	return Enemy;
