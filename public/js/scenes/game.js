@@ -23,8 +23,7 @@ function(	_,
 
 	GameScene.prototype.attachAssets = function() {
 		var deferred = when.defer(),
-			that = this,
-			enemies = [];
+			that = this;
 
 		// TODO: would be sweet to not have to load the assets separately like this
 		require([	'backdrops/clouds',
@@ -32,13 +31,15 @@ function(	_,
 					'entities/sonic',
 					'entities/dead-sonic',
 					'entities/enemy',
-					'ui/pause-button'],
+					'ui/pause-button',
+					'ui/score'],
 		function(	Clouds,
 					Ground,
 					Sonic,
 					DeadSonic,
 					Enemy,
-					PauseButton) {
+					PauseButton,
+					PlayerScore) {
 
 			that.clouds1 = new Clouds(0);
 			that.clouds2 = new Clouds(that.clouds1.width);
@@ -49,17 +50,12 @@ function(	_,
 			that.sonic = new Sonic();
 			that.deadSonic = new DeadSonic(that.sonic.x, that.sonic.y);
 
-			for (var i = 0; i < 3; i++) {
-				enemies[i] = new Enemy();
-
-				enemies[i].x = enemies[i].xSpacing * (i + 1);
-			}
-
-			that.enemies = enemies;
-
-			console.log(that.enemies);
+			that.enemy1 = new Enemy(0);
+			that.enemy2 = new Enemy(that.enemy1.x);
 
 			that.ui.pauseButton = new PauseButton();
+
+			that.ui.playerScore = new PlayerScore();
 
 			// TODO: remove this once canvas is proper size
 			that.ui.barrierWall = new createjs.Shape();
@@ -84,8 +80,6 @@ function(	_,
 		var listenerProxies = this.generateListenerProxies(),
 			deferred = when.defer();
 
-		console.log(listenerProxies);
-
 		FLAPPYSONIC.canvas.addEventListener('click', listenerProxies.flyUpProxy);
 
 		this.ui.pauseButton.addEventListener('click', listenerProxies.togglePauseProxy);
@@ -98,12 +92,11 @@ function(	_,
 	GameScene.prototype.removeListeners = function() {
 		var listenerProxies = this.generateListenerProxies();
 
-		console.log(FLAPPYSONIC.canvas);
-
 		FLAPPYSONIC.canvas.removeEventListener('click', listenerProxies.flyUpProxy);
 
-		// TODO: need to remove event for pause button?
-		//this.ui.pauseButton.removeEventListener('click', listenerProxies.togglePauseProxy);
+		this.ui.pauseButton.removeEventListener('click', listenerProxies.togglePauseProxy);
+
+		FLAPPYSONIC.stage.removeChild(this.ui.pauseButton);
 	};
 
 	GameScene.prototype.startTicker = function() {
@@ -126,11 +119,16 @@ function(	_,
 	};
 
 	GameScene.prototype.render = function() {
-		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.sonic, this.ui.pauseButton, this.ui.barrierWall);
-
-		for (var i = 0; i < this.enemies.length; i++) {
-			FLAPPYSONIC.stage.addChildAt(this.enemies[i], (FLAPPYSONIC.stage.getChildIndex(this.ground2) + (i + 1)));
-		}
+		FLAPPYSONIC.stage.addChild(this.clouds1,
+									this.clouds2,
+									this.ground1,
+									this.ground2,
+									this.enemy1,
+									this.enemy2,
+									this.sonic,
+									this.ui.pauseButton,
+									this.ui.playerScore,
+									this.ui.barrierWall);
 
 		FLAPPYSONIC.stage.update();
 	};
@@ -192,17 +190,30 @@ function(	_,
 
 			this.sonic.glideDown(deltaPerSecond);
 
-			for (var i = 0; i < this.enemies.length; i++) {
-				this.enemies[i].move(deltaPerSecond);
-			}
+			this.enemy1.move(deltaPerSecond, this.enemy2.x);
+			this.enemy2.move(deltaPerSecond, this.enemy1.x);
 
 			// intentionally slow the rate at which collisions are checked; again, for performance reasons
 			// time divided by change in time is evenly divisible by factor of 5
 			if (Math.floor(evt.time / evt.delta % 5) === 0) {
-				for (var j = 0; j < this.enemies.length; j++) {
-					if (this.enemies[j].checkCollision(this.sonic.x, this.sonic.width, this.sonic.y, this.sonic.height)) {
+				if (this.sonic.x >= (this.enemy1.x + this.enemy1.width) ||
+					this.sonic.x >= (this.enemy2.x + this.enemy2.width)) {
+					this.ui.playerScore.increaseScore();
+				}
+			
+				if (this.enemy1.checkCollision(this.sonic.x,
+												this.sonic.width,
+												this.sonic.y,
+												this.sonic.height) ||
+					this.enemy2.checkCollision(this.sonic.x,
+												this.sonic.width,
+												this.sonic.y,
+												this.sonic.height)) {
 						this.handleDeath();
-					}
+				}
+
+				if (this.sonic.y + this.sonic.height >= FLAPPYSONIC.canvasHeight) {
+					this.handleDeath();
 				}
 			}
 

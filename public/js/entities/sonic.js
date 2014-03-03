@@ -52,7 +52,7 @@ function(	_,
 	Sonic.prototype = new createjs.Sprite(dataSonic, 'straight');
 
 	Sonic.prototype.glideDown = function(deltaPerSecond) {
-		this.y += deltaPerSecond * 20;
+		this.y += deltaPerSecond * 80;
 	};
 
 	Sonic.prototype.flyUp = function(evt) {

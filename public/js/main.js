@@ -37,6 +37,10 @@ function(	_,
 		});
 	};
 
+	FLAPPYSONIC.player = {
+		score: 0
+	};
+
 	// create the canvas and cache some references to its metrics
     FLAPPYSONIC.canvas = document.getElementById('gameCanvas');
 	FLAPPYSONIC.canvasWidth = FLAPPYSONIC.canvas.offsetWidth;
@@ -47,7 +51,7 @@ function(	_,
 
 	// create an asset loadqueue
 	FLAPPYSONIC.loadQueue = new createjs.LoadQueue();
-	
+
 	FLAPPYSONIC.loadQueue.installPlugin(createjs.Sound);
 
 	// instantiate the first scene: a 'loading' screen

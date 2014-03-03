@@ -23,13 +23,14 @@ function(	_,
 		}
 	});
 
-	var Enemy = function() {
+	var Enemy = function(xPos) {
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
-		// TODO: randomly generate y position
-		this.y = Math.floor(Math.random() * (FLAPPYSONIC.canvasHeight - this.height));
 
 		this.xSpacing = 225;
+
+		this.x = xPos + this.xSpacing;
+		this.y = this.generateRandomYPos();
 
 		// TODO: give enemy some sort of more accurate hitbox?
 
@@ -50,8 +51,20 @@ function(	_,
 
 	Enemy.prototype = new createjs.Sprite(dataEnemy, 'stay');
 
-	Enemy.prototype.move = function(deltaPerSecond) {
-		this.x -= deltaPerSecond * 40;
+	Enemy.prototype.generateRandomYPos = function() {
+		return Math.floor(Math.random() * (FLAPPYSONIC.canvasHeight - this.height));
+	};
+
+	Enemy.prototype.move = function(deltaPerSecond, oppositeEnemyXPos) {
+		if (this.x <= -this.width){
+		    this.x = (oppositeEnemyXPos + this.width) + this.xSpacing;
+
+		    this.y = this.generateRandomYPos();
+		}
+		else {
+			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
+			this.x -= deltaPerSecond * 40;
+		}
 	};
 
 	Enemy.prototype.checkCollision = function(sonicXPos, sonicWidth, sonicYPos, sonicHeight) {
