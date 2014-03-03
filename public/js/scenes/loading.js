@@ -33,6 +33,7 @@ function(	_,
 	LoadingScene.prototype.loadAssets = function() {
 		var deferred = when.defer(),
 			manifest = [
+				// define images
 			    {
 			    	id: 'floor',
 			    	src: 'img/background1.png'
@@ -52,6 +53,11 @@ function(	_,
 			    {
 			    	id: 'enemy',
 			    	src: 'img/enemy.png'
+			    },
+			    // define audio
+			    {
+			    	id: 'wingsFlap',
+			    	src: 'snd/flap.mp3'
 			    }
 			];
 

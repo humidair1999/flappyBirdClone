@@ -47,6 +47,8 @@ function(	_,
 
 	// create an asset loadqueue
 	FLAPPYSONIC.loadQueue = new createjs.LoadQueue();
+	
+	FLAPPYSONIC.loadQueue.installPlugin(createjs.Sound);
 
 	// instantiate the first scene: a 'loading' screen
 	var loadingScene = new LoadingScene();

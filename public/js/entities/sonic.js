@@ -61,6 +61,8 @@ function(	_,
 		if (!createjs.Ticker.getPaused()) {
 			this.gotoAndPlay('up');
 
+			createjs.Sound.play('wingsFlap');
+
 			createjs.Tween.get(this, { override: true })
 				.to({ y: (function() {
 					if (that.y <= 70) {
