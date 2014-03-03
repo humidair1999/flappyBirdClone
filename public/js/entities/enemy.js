@@ -26,8 +26,10 @@ function(	_,
 	var Enemy = function() {
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
-		this.x = 200;
-		this.y = 50;
+		// TODO: randomly generate y position
+		this.y = Math.floor(Math.random() * (FLAPPYSONIC.canvasHeight - this.height));
+
+		this.xSpacing = 225;
 
 		// TODO: give enemy some sort of more accurate hitbox?
 

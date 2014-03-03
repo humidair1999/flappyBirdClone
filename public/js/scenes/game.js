@@ -52,7 +52,7 @@ function(	_,
 			for (var i = 0; i < 3; i++) {
 				enemies[i] = new Enemy();
 
-				enemies[i].x = (40 * i) + 300;
+				enemies[i].x = enemies[i].xSpacing * (i + 1);
 			}
 
 			that.enemies = enemies;
