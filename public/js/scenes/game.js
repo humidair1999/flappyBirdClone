@@ -19,6 +19,8 @@ function(	_,
 
 	GameScene.prototype.initialize = function() {
 		console.log('init game');
+
+		createjs.Sound.play('marbleZoneSong', createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
 	};
 
 	GameScene.prototype.attachAssets = function() {
@@ -200,7 +202,7 @@ function(	_,
 					this.sonic.x >= (this.enemy2.x + this.enemy2.width)) {
 					this.ui.playerScore.increaseScore();
 				}
-			
+
 				if (this.enemy1.checkCollision(this.sonic.x,
 												this.sonic.width,
 												this.sonic.y,
@@ -222,7 +224,27 @@ function(	_,
 	};
 
 	GameScene.prototype.endScene = _.once(function() {
-		console.log('game over');
+		var deferreds = [];
+
+		var fadeChild = function(element) {
+			var deferred = when.defer();
+
+			createjs.Tween.get(element).to({alpha:0}, 1000).call(function() {
+				console.log('done');
+
+				deferred.resolve();
+			});
+
+			return deferred.promise;
+		};
+
+		_.each(FLAPPYSONIC.stage.children, function(element) {
+			deferreds.push(fadeChild(element));
+		});
+
+		when.all(deferreds).then(function() {
+			window.location.reload(false);
+		});
 	});
  
 	return GameScene;

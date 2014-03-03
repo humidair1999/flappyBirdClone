@@ -10,8 +10,8 @@ function(	_,
 	var PlayerScore = function() {
 		this.width = this.getMeasuredWidth();
 		this.height = this.getMeasuredHeight();
-		this.x = FLAPPYSONIC.canvasWidth - this.width - 10;
-		this.y = FLAPPYSONIC.canvasHeight - this.height - 10;
+		this.x = 10;
+		this.y = 5;
 
 		this.score = 0;
 

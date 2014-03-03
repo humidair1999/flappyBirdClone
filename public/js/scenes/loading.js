@@ -58,6 +58,10 @@ function(	_,
 			    {
 			    	id: 'wingsFlap',
 			    	src: 'snd/flap.mp3'
+			    },
+			    {
+			    	id: 'marbleZoneSong',
+			    	src: 'snd/03-marble-zone.mp3'
 			    }
 			];
 
