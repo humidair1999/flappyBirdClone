@@ -26,6 +26,8 @@ function(	_,
 		}
 	});
 
+	// TODO: store more properties of sonic on constructor, rather than relying on singletons?
+
 	var Sonic = function() {
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
@@ -69,15 +71,15 @@ function(	_,
 					}
 				})()}, 700, createjs.Ease.cubicInOut)
 				.call(function() {
-					this.gotoAndPlay('down');
+					if (this.currentAnimation !== 'empty') {
+						this.gotoAndPlay('down');
+					}					
 				});
 		}
 	};
 
 	// Sonic can only ever die once, so let's utilize the die() method as a singleton
 	Sonic.prototype.die = _.once(function() {
-		console.log('dead');
-
 		this.gotoAndPlay('empty');
 	});
  

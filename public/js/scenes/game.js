@@ -52,6 +52,10 @@ function(	_,
 
 			that.ui.pauseButton = new PauseButton();
 
+			// TODO: remove this once canvas is proper size
+			that.ui.barrierWall = new createjs.Shape();
+			that.ui.barrierWall.graphics.beginFill("#ffffff").drawRect(319, 0, 1, 288);
+
 			deferred.resolve();
 		});
 
@@ -113,7 +117,7 @@ function(	_,
 	};
 
 	GameScene.prototype.render = function() {
-		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.enemy, this.sonic, this.ui.pauseButton);
+		FLAPPYSONIC.stage.addChild(this.clouds1, this.clouds2, this.ground1, this.ground2, this.enemy, this.sonic, this.ui.pauseButton, this.ui.barrierWall);
 
 		FLAPPYSONIC.stage.update();
 	};

@@ -50,8 +50,6 @@ function(	_,
 	DeadSonic.prototype.plummet = _.once(function() {
 		var deferred = when.defer();
 
-		console.log('plummet');
-
 		if (!createjs.Ticker.getPaused()) {
 			createjs.Tween.get(this, { override: true })
 				.to({ y: (this.y - 40) }, 300, createjs.Ease.getPowIn(2.2))
