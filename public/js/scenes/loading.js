@@ -56,8 +56,16 @@ function(	_,
 			    },
 			    // define audio
 			    {
-			    	id: 'wingsFlap',
+			    	id: 'flap',
 			    	src: 'snd/flap.mp3'
+			    },
+			    {
+			    	id: 'crash',
+			    	src: 'snd/crash.mp3'
+			    },
+			    {
+			    	id: 'die',
+			    	src: 'snd/die.mp3'
 			    },
 			    {
 			    	id: 'marbleZoneSong',

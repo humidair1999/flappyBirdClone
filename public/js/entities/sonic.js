@@ -61,7 +61,7 @@ function(	_,
 		if (!createjs.Ticker.getPaused()) {
 			this.gotoAndPlay('up');
 
-			createjs.Sound.play('wingsFlap', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.6, 0);
+			createjs.Sound.play('flap', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
 
 			createjs.Tween.get(this, { override: true })
 				.to({ y: (function() {

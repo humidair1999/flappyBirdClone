@@ -67,6 +67,10 @@ function(	_,
 		}
 	};
 
+	Enemy.prototype.playCrash = _.once(function() {
+		createjs.Sound.play('crash', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
+	});
+
 	Enemy.prototype.checkCollision = function(sonicXPos, sonicWidth, sonicYPos, sonicHeight) {
 		// right-side collision: if sonic is past the right edge of the enemy,
 		if (sonicXPos >= this.x + this.width ||
@@ -79,6 +83,8 @@ function(	_,
 			return false;
 		}
 		else {
+			this.playCrash();
+
 			return true;
 		}
 	};

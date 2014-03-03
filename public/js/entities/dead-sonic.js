@@ -57,6 +57,8 @@ function(	_,
 				.to({ y: FLAPPYSONIC.canvasHeight }, 800, createjs.Ease.cubicInOut)
 				.wait(500)
 				.call(function() {
+					createjs.Sound.play('die', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
+
 					deferred.resolve();
 				});
 		}
