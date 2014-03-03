@@ -63,10 +63,13 @@ function(	_,
 			    	id: 'marbleZoneSong',
 			    	src: 'snd/03-marble-zone.mp3'
 			    }
-			];
+			],
+			filesLoaded = 0;
 
-		var handleProgress = function() {
-			this.loadingMessage.text = 'Loading ' + (FLAPPYSONIC.loadQueue.progress * 100|0) + '%';
+		var handleLoad = function() {
+			filesLoaded++;
+
+			this.loadingMessage.text = filesLoaded + ' of ' + manifest.length + ' files loaded';
 
 	    	FLAPPYSONIC.stage.update();
 		};
@@ -79,8 +82,8 @@ function(	_,
 			deferred.resolve();
 		};
 
-		var handleProgressProxy = createjs.proxy(handleProgress, this);
-		FLAPPYSONIC.loadQueue.addEventListener('progress', handleProgressProxy);
+		var handleLoadProxy = createjs.proxy(handleLoad, this);
+		FLAPPYSONIC.loadQueue.addEventListener('fileload', handleLoadProxy);
 
 		var handleCompleteProxy = createjs.proxy(handleComplete, this);
 		FLAPPYSONIC.loadQueue.addEventListener('complete', handleCompleteProxy);
