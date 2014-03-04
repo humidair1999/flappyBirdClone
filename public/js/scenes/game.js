@@ -166,39 +166,35 @@ function(	_,
 		return deferred.promise;
 	});
 
-	GameScene.prototype.moveClouds = function(deltaPerSecond) {
+	GameScene.prototype.moveClouds = function(pixelsPerDelta) {
 		if (this.clouds1.x <= -this.clouds1.width){
 		    this.clouds1.x = this.clouds2.x + this.clouds2.width;
 		}
 		else {
-			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
-	 		this.clouds1.x -= deltaPerSecond * 20;
+	 		this.clouds1.x -= pixelsPerDelta;
 		}
 
 		if (this.clouds2.x <= -this.clouds2.width){
 		    this.clouds2.x = this.clouds1.x + this.clouds1.width;
 		}
 		else {
-			this.clouds2.x -= deltaPerSecond * 20;
-
-			console.log(this.clouds2.x);
+			this.clouds2.x -= pixelsPerDelta;
 		}
 	};
 
-	GameScene.prototype.moveGround = function(deltaPerSecond) {
+	GameScene.prototype.moveGround = function(pixelsPerDelta) {
 		if (this.ground1.x <= -this.ground1.width){
-		    this.ground1.x = this.ground2.x + this.ground2.width;
+		    this.ground1.x = this.ground2.x + this.ground2.width - 4;
 		}
 		else {
-			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
-	 		this.ground1.x -= deltaPerSecond * 20;
+	 		this.ground1.x -= pixelsPerDelta;
 		}
 
 		if (this.ground2.x <= -this.ground2.width){
-		    this.ground2.x = this.ground1.x + this.ground1.width;
+		    this.ground2.x = this.ground1.x + this.ground1.width - 4;
 		}
 		else {
-			this.ground2.x -= deltaPerSecond * 20;
+			this.ground2.x -= pixelsPerDelta;
 		}
 	};
 
@@ -222,18 +218,17 @@ function(	_,
 			deltaInSeconds = evt.delta / 1000;
 
 		if (!createjs.Ticker.getPaused()) {
-			// every delta (or 'change event') (in seconds), move a fraction of total pixels per second
+			// every delta (or 'change event'), move a fraction of total pixels per second
 			//	(33.999 / 1000) * 20
 			//	= 0.0339 * 20
 			//	= 0.639 pixels per delta
-			this.moveClouds(deltaInSeconds);
+			this.moveClouds(deltaInSeconds * 20);
+			this.moveGround(deltaInSeconds * 40);
 
-			this.moveGround(deltaPerSecond);
+			this.sonic.tick(evt, deltaInSeconds);
 
-			this.sonic.glideDown(deltaPerSecond);
-
-			this.enemy1.move(deltaPerSecond, this.enemy2.x);
-			this.enemy2.move(deltaPerSecond, this.enemy1.x);
+			this.enemy1.tick(evt, deltaInSeconds, this.enemy2.x, this.enemy2.width, this.enemy2.xSpacing);
+			this.enemy2.tick(evt, deltaInSeconds, this.enemy1.x, this.enemy1.width, this.enemy1.xSpacing);
 
 			// intentionally slow the rate at which collisions are checked; again, for performance reasons
 			// time divided by change in time is evenly divisible by factor of 5

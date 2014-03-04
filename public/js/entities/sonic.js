@@ -37,23 +37,14 @@ function(	_,
 		this.framerate = 2;
 	};
 
-	// don't have to override prototype because it's not an actual
-	//	createjs construct with a default initialize()
-
-	// var p = Button.prototype = new createjs.Container();
-	// Button.prototype.Container_initialize = p.initialize;
-	// Button.prototype.initialize = function(label) {
-	//     this.Container_initialize();
-	//     // add custom setup logic here.
-	// }
-
-	// TODO: why can't I proxy the fucking initialize() method here?
-
 	Sonic.prototype = new createjs.Sprite(dataSonic, 'straight');
 
-	Sonic.prototype.glideDown = function(deltaPerSecond) {
-		this.y += deltaPerSecond * 80;
+	Sonic.prototype.glideDown = function(pixelsPerDelta) {
+		this.y += pixelsPerDelta;
 	};
+
+	// TODO: might be nice to wrap() ticker getPaused() checks in some sort of reusable
+	//	function
 
 	Sonic.prototype.flyUp = function(evt) {
 		var that = this;
@@ -84,6 +75,10 @@ function(	_,
 	Sonic.prototype.die = _.once(function() {
 		this.gotoAndPlay('empty');
 	});
+
+	Sonic.prototype.tick = function(evt, deltaInSeconds) {
+		this.glideDown(deltaInSeconds * 80);
+	};
  
 	return Sonic;
 

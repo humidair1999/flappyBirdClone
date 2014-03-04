@@ -55,15 +55,14 @@ function(	_,
 		return Math.floor(Math.random() * (FLAPPYSONIC.canvas.height - this.height));
 	};
 
-	Enemy.prototype.move = function(deltaPerSecond, oppositeEnemyXPos) {
+	Enemy.prototype.move = function(pixelsPerDelta, oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing) {
 		if (this.x <= -this.width){
-		    this.x = (oppositeEnemyXPos + this.width) + this.xSpacing;
+		    this.x = (oppositeEnemyXPos + oppositeEnemyWidth) + oppositeEnemyXSpacing;
 
 		    this.y = this.generateRandomYPos();
 		}
 		else {
-			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
-			this.x -= deltaPerSecond * 40;
+			this.x -= pixelsPerDelta;
 		}
 	};
 
@@ -87,6 +86,10 @@ function(	_,
 
 			return true;
 		}
+	};
+
+	Enemy.prototype.tick = function(evt, deltaInSeconds, oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing) {
+		this.move((deltaInSeconds * 40), oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing);
 	};
  
 	return Enemy;
