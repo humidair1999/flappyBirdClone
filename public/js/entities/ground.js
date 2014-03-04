@@ -11,7 +11,7 @@ function(	_,
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
 		this.x = xPos;
-		this.y = (FLAPPYSONIC.canvasHeight - this.height);
+		this.y = (FLAPPYSONIC.canvas.height - this.height);
 	};
 
 	// don't have to override prototype because it's not an actual

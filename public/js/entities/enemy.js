@@ -52,7 +52,7 @@ function(	_,
 	Enemy.prototype = new createjs.Sprite(dataEnemy, 'stay');
 
 	Enemy.prototype.generateRandomYPos = function() {
-		return Math.floor(Math.random() * (FLAPPYSONIC.canvasHeight - this.height));
+		return Math.floor(Math.random() * (FLAPPYSONIC.canvas.height - this.height));
 	};
 
 	Enemy.prototype.move = function(deltaPerSecond, oppositeEnemyXPos) {

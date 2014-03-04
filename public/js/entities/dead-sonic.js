@@ -54,7 +54,7 @@ function(	_,
 			createjs.Tween.get(this, { override: true })
 				.to({ y: (this.y - 40) }, 300, createjs.Ease.getPowIn(2.2))
 				.wait(300)
-				.to({ y: FLAPPYSONIC.canvasHeight }, 800, createjs.Ease.cubicInOut)
+				.to({ y: FLAPPYSONIC.canvas.height }, 800, createjs.Ease.cubicInOut)
 				.wait(500)
 				.call(function() {
 					createjs.Sound.play('die', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);

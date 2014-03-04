@@ -8,7 +8,7 @@ function(	_,
 	'use strict';
 
 	var PauseButton = function() {
-		this.graphics.beginFill("#ff0000").drawRect(FLAPPYSONIC.canvasWidth - 40, 10, 30, 30);
+		this.graphics.beginFill("#ff0000").drawRect(FLAPPYSONIC.canvas.width - 40, 10, 30, 30);
 	};
 
 	// don't have to override prototype because it's not an actual

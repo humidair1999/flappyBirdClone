@@ -159,6 +159,8 @@ function(	_,
 		// add dead sonic to the stage directly after live sonic, to make him appear on top
 		FLAPPYSONIC.stage.addChildAt(this.deadSonic, (FLAPPYSONIC.stage.getChildIndex(this.sonic) + 1));
 
+		FLAPPYSONIC.stage.update();
+
 		deferred.resolve();
 
 		return deferred.promise;
