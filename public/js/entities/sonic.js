@@ -81,7 +81,12 @@ function(	_,
 	Sonic.prototype.tick = function(evt, deltaInSeconds) {
 		this.glideDown(deltaInSeconds * 80);
 
-		radio('sonic:tick').broadcast('haha');
+		// intentionally slow the rate at which sonic broadcasts his movements; again, for
+		//	performance reasons
+		// (time) divided by (change in time) is evenly divisible by factor of 5
+		if (Math.floor(evt.time / evt.delta % 5) === 0) {
+			radio('sonic:tick').broadcast('haha');
+		}
 	};
 
 	// TODO: broadcast movements

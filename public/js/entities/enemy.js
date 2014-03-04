@@ -45,9 +45,9 @@ function(	_,
 
 	Enemy.prototype.initialize = function() {
 		// subscribe to various pubsub publishers
-		radio('sonic:tick').subscribe([function(stuff) {
-			console.log(this);
-		}, this]);
+		radio('sonic:tick')
+			.subscribe([this.hasCollided, this])
+			.subscribe([this.hasPassed, this]);
 	};
 
 	Enemy.prototype.generateRandomYPos = function() {
@@ -69,22 +69,28 @@ function(	_,
 		createjs.Sound.play('crash', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
 	});
 
-	Enemy.prototype.checkCollision = function(sonicXPos, sonicWidth, sonicYPos, sonicHeight) {
-		// right-side collision: if sonic is past the right edge of the enemy,
-		if (sonicXPos >= this.x + this.width ||
-			// left-side collision: if sonic is past the left edge of the enemy,
-			sonicXPos + sonicWidth <= this.x ||
-			// bottom collision: if sonic is underneath the enemy,
-			sonicYPos >= this.y + this.height ||
-			// and top collision: if sonic is above the enemy
-			sonicYPos + sonicHeight <= this.y ) {
-			return false;
-		}
-		else {
-			this.playCrash();
+	Enemy.prototype.hasCollided = function(sonicXPos, sonicWidth, sonicYPos, sonicHeight) {
+		console.log('collided with sonic: ', this.x);
 
-			return true;
-		}
+		// right-side collision: if sonic is past the right edge of the enemy,
+		// if (sonicXPos >= this.x + this.width ||
+		// 	// left-side collision: if sonic is past the left edge of the enemy,
+		// 	sonicXPos + sonicWidth <= this.x ||
+		// 	// bottom collision: if sonic is underneath the enemy,
+		// 	sonicYPos >= this.y + this.height ||
+		// 	// and top collision: if sonic is above the enemy
+		// 	sonicYPos + sonicHeight <= this.y ) {
+		// 	return false;
+		// }
+		// else {
+		// 	this.playCrash();
+
+		// 	return true;
+		// }
+	};
+
+	Enemy.prototype.hasPassed = function() {
+		console.log('passed sonic: ', this.x);
 	};
 
 	Enemy.prototype.tick = function(evt, deltaInSeconds, oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing) {

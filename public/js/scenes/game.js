@@ -232,27 +232,27 @@ function(	_,
 
 			// intentionally slow the rate at which collisions are checked; again, for performance reasons
 			// time divided by change in time is evenly divisible by factor of 5
-			if (Math.floor(evt.time / evt.delta % 5) === 0) {
-				if (this.sonic.x >= (this.enemy1.x + this.enemy1.width) ||
-					this.sonic.x >= (this.enemy2.x + this.enemy2.width)) {
-					this.ui.playerScore.increaseScore();
-				}
+			// if (Math.floor(evt.time / evt.delta % 5) === 0) {
+			// 	if (this.sonic.x >= (this.enemy1.x + this.enemy1.width) ||
+			// 		this.sonic.x >= (this.enemy2.x + this.enemy2.width)) {
+			// 		this.ui.playerScore.increaseScore();
+			// 	}
 
-				if (this.enemy1.checkCollision(	this.sonic.x,
-												this.sonic.width,
-												this.sonic.y,
-												this.sonic.height) ||
-					this.enemy2.checkCollision(	this.sonic.x,
-												this.sonic.width,
-												this.sonic.y,
-												this.sonic.height)) {
-						this.handleDeath();
-				}
+			// 	if (this.enemy1.checkCollision(	this.sonic.x,
+			// 									this.sonic.width,
+			// 									this.sonic.y,
+			// 									this.sonic.height) ||
+			// 		this.enemy2.checkCollision(	this.sonic.x,
+			// 									this.sonic.width,
+			// 									this.sonic.y,
+			// 									this.sonic.height)) {
+			// 			this.handleDeath();
+			// 	}
 
-				if (this.sonic.y + this.sonic.height >= FLAPPYSONIC.canvas.height) {
-					this.handleDeath();
-				}
-			}
+			// 	if (this.sonic.y + this.sonic.height >= FLAPPYSONIC.canvas.height) {
+			// 		this.handleDeath();
+			// 	}
+			// }
 
 			FLAPPYSONIC.stage.update(evt);
 		}
