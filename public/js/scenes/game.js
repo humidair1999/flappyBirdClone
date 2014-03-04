@@ -282,6 +282,8 @@ function(	_,
 		});
 	});
  
+	// TODO: subscribe to enemy's collision occurring
+
 	return GameScene;
 
 });

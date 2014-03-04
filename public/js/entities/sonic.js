@@ -1,9 +1,11 @@
 define([	'underscore',
 			'when',
-			'createjs'],
+			'createjs',
+			'radio'],
 function(	_,
 			when,
-			createjs) {
+			createjs,
+			radio) {
 
 	'use strict';
 
@@ -78,7 +80,11 @@ function(	_,
 
 	Sonic.prototype.tick = function(evt, deltaInSeconds) {
 		this.glideDown(deltaInSeconds * 80);
+
+		radio('sonic:tick').broadcast('haha');
 	};
+
+	// TODO: broadcast movements
  
 	return Sonic;
 

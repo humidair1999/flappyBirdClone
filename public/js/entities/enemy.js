@@ -1,9 +1,11 @@
 define([	'underscore',
 			'when',
-			'createjs'],
+			'createjs',
+			'radio'],
 function(	_,
 			when,
-			createjs) {
+			createjs,
+			radio) {
 
 	'use strict';
 
@@ -35,21 +37,18 @@ function(	_,
 		// TODO: give enemy some sort of more accurate hitbox?
 
 		this.framerate = Math.floor((Math.random() * 8) + 1);
+
+		this.initialize();
 	};
 
-	// don't have to override prototype because it's not an actual
-	//	createjs construct with a default initialize()
-
-	// var p = Button.prototype = new createjs.Container();
-	// Button.prototype.Container_initialize = p.initialize;
-	// Button.prototype.initialize = function(label) {
-	//     this.Container_initialize();
-	//     // add custom setup logic here.
-	// }
-
-	// TODO: why can't I proxy the fucking initialize() method here?
-
 	Enemy.prototype = new createjs.Sprite(dataEnemy, 'stay');
+
+	Enemy.prototype.initialize = function() {
+		// subscribe to various pubsub publishers
+		radio('sonic:tick').subscribe([function(stuff) {
+			console.log(this);
+		}, this]);
+	};
 
 	Enemy.prototype.generateRandomYPos = function() {
 		return Math.floor(Math.random() * (FLAPPYSONIC.canvas.height - this.height));
@@ -91,6 +90,10 @@ function(	_,
 	Enemy.prototype.tick = function(evt, deltaInSeconds, oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing) {
 		this.move((deltaInSeconds * 40), oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing);
 	};
+
+	// TODO: subscribe to sonic's movements
+
+	// TODO: broadcast that a collision occurred
  
 	return Enemy;
 
