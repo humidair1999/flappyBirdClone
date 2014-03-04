@@ -18,8 +18,8 @@ function(	_,
 	//	createjs construct with a default initialize()
 
 	GameScene.prototype.initialize = function() {
-		console.log('init game');
-
+		// play the background music as soon as the game is instantiated; the user needs
+		//	something to listen to while the rest of setup continues!
 		createjs.Sound.play('marbleZoneSong', createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
 	};
 
@@ -43,11 +43,17 @@ function(	_,
 					PauseButton,
 					PlayerScore) {
 
+			// for clouds and ground, pass in their x positions; for the second of each,
+			//	base their x position on the x of the partner element
+
 			that.clouds1 = new Clouds(0);
 			that.clouds2 = new Clouds(that.clouds1.width);
 
 			that.ground1 = new Ground(0);
 			that.ground2 = new Ground(that.ground1.width);
+
+			// note that sonic (the player) and dead sonic are two separate entities; this is
+			//	because they utilize two different sprite sheets and sets of metrics
 
 			that.sonic = new Sonic();
 			that.deadSonic = new DeadSonic(that.sonic.x, that.sonic.y);
@@ -69,7 +75,7 @@ function(	_,
 		return deferred.promise;
 	};
 
-	// cache a reference to these proxied listeners so that both the attachers and removers have access
+	// memoize a reference to these proxied listeners so that both the attachers and removers have access
 	//	to the exact same proxies
 	GameScene.prototype.generateListenerProxies = _.memoize(function() {
 		return {
@@ -82,7 +88,7 @@ function(	_,
 		var listenerProxies = this.generateListenerProxies(),
 			deferred = when.defer();
 
-		FLAPPYSONIC.canvas.addEventListener('click', listenerProxies.flyUpProxy);
+		FLAPPYSONIC.canvas.element.addEventListener('click', listenerProxies.flyUpProxy);
 
 		this.ui.pauseButton.addEventListener('click', listenerProxies.togglePauseProxy);
 
@@ -94,18 +100,24 @@ function(	_,
 	GameScene.prototype.removeListeners = function() {
 		var listenerProxies = this.generateListenerProxies();
 
-		FLAPPYSONIC.canvas.removeEventListener('click', listenerProxies.flyUpProxy);
+		FLAPPYSONIC.canvas.element.removeEventListener('click', listenerProxies.flyUpProxy);
 
 		this.ui.pauseButton.removeEventListener('click', listenerProxies.togglePauseProxy);
 
 		FLAPPYSONIC.stage.removeChild(this.ui.pauseButton);
+
+		FLAPPYSONIC.stage.update();
 	};
 
 	GameScene.prototype.startTicker = function() {
-		var deferred = when.defer();
+		var deferred = when.defer(),
+			tickProxy;
 
+		// if no event listener exists for the 'tick' event, create one
 		if (!createjs.Ticker.hasEventListener('tick')) {
-			var tickProxy = createjs.proxy(this.tick, this);
+			// proxy the callback, so 'this' within the tick callback refers to this scene
+			//	instance
+			tickProxy = createjs.proxy(this.tick, this);
 
 		    createjs.Ticker.addEventListener('tick', tickProxy);
 		    createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED;
@@ -113,6 +125,7 @@ function(	_,
 
 			deferred.resolve();
 		}
+		// otherwise, can assume the listener already exists
 		else {
 			deferred.resolve();
 		}
@@ -121,7 +134,7 @@ function(	_,
 	};
 
 	GameScene.prototype.render = function() {
-		FLAPPYSONIC.stage.addChild(this.clouds1,
+		FLAPPYSONIC.stage.addChild(	this.clouds1,
 									this.clouds2,
 									this.ground1,
 									this.ground2,
@@ -139,9 +152,11 @@ function(	_,
 	GameScene.prototype.renderDeadSonic = _.once(function() {
 		var deferred = when.defer();
 
+		// slightly manipulate dead sonic's position so he appears in the center of live sonic
 		this.deadSonic.x = this.sonic.x + 10;
 		this.deadSonic.y = this.sonic.y - 10;
 
+		// add dead sonic to the stage directly after live sonic, to make him appear on top
 		FLAPPYSONIC.stage.addChildAt(this.deadSonic, (FLAPPYSONIC.stage.getChildIndex(this.sonic) + 1));
 
 		deferred.resolve();
@@ -184,6 +199,8 @@ function(	_,
 		var that = this,
 			deltaPerSecond = evt.delta / 1000;
 
+			console.log(this);
+
 		if (!createjs.Ticker.getPaused()) {
 			this.moveClouds(deltaPerSecond);
 
@@ -203,18 +220,18 @@ function(	_,
 					this.ui.playerScore.increaseScore();
 				}
 
-				if (this.enemy1.checkCollision(this.sonic.x,
+				if (this.enemy1.checkCollision(	this.sonic.x,
 												this.sonic.width,
 												this.sonic.y,
 												this.sonic.height) ||
-					this.enemy2.checkCollision(this.sonic.x,
+					this.enemy2.checkCollision(	this.sonic.x,
 												this.sonic.width,
 												this.sonic.y,
 												this.sonic.height)) {
 						this.handleDeath();
 				}
 
-				if (this.sonic.y + this.sonic.height >= FLAPPYSONIC.canvasHeight) {
+				if (this.sonic.y + this.sonic.height >= FLAPPYSONIC.canvas.height) {
 					this.handleDeath();
 				}
 			}
