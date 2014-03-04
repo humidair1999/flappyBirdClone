@@ -168,18 +168,37 @@ function(	_,
 
 	GameScene.prototype.moveClouds = function(deltaPerSecond) {
 		if (this.clouds1.x <= -this.clouds1.width){
-		    this.clouds1.x = this.clouds2.x + this.clouds1.width;
+		    this.clouds1.x = this.clouds2.x + this.clouds2.width;
 		}
 		else {
 			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
 	 		this.clouds1.x -= deltaPerSecond * 20;
 		}
 
-		if (this.clouds2.x <= -this.clouds1.width){
+		if (this.clouds2.x <= -this.clouds2.width){
 		    this.clouds2.x = this.clouds1.x + this.clouds1.width;
 		}
 		else {
 			this.clouds2.x -= deltaPerSecond * 20;
+
+			console.log(this.clouds2.x);
+		}
+	};
+
+	GameScene.prototype.moveGround = function(deltaPerSecond) {
+		if (this.ground1.x <= -this.ground1.width){
+		    this.ground1.x = this.ground2.x + this.ground2.width;
+		}
+		else {
+			// (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond)
+	 		this.ground1.x -= deltaPerSecond * 20;
+		}
+
+		if (this.ground2.x <= -this.ground2.width){
+		    this.ground2.x = this.ground1.x + this.ground1.width;
+		}
+		else {
+			this.ground2.x -= deltaPerSecond * 20;
 		}
 	};
 
@@ -199,13 +218,17 @@ function(	_,
 
 	GameScene.prototype.tick = function(evt) {
 		var that = this,
-			deltaPerSecond = evt.delta / 1000;
+			// convert delta from milliseconds into seconds
+			deltaInSeconds = evt.delta / 1000;
 
 		if (!createjs.Ticker.getPaused()) {
-			this.moveClouds(deltaPerSecond);
+			// every delta (or 'change event') (in seconds), move a fraction of total pixels per second
+			//	(33.999 / 1000) * 20
+			//	= 0.0339 * 20
+			//	= 0.639 pixels per delta
+			this.moveClouds(deltaInSeconds);
 
-			this.ground1.move(deltaPerSecond, this.ground2.x);
-			this.ground2.move(deltaPerSecond, this.ground1.x);
+			this.moveGround(deltaPerSecond);
 
 			this.sonic.glideDown(deltaPerSecond);
 
