@@ -29,7 +29,7 @@ function(	_,
 
 		// TODO: would be sweet to not have to load the assets separately like this
 		require([	'backdrops/clouds',
-					'entities/ground',
+					'backdrops/ground',
 					'entities/sonic',
 					'entities/dead-sonic',
 					'entities/enemy',
@@ -200,8 +200,6 @@ function(	_,
 	GameScene.prototype.tick = function(evt) {
 		var that = this,
 			deltaPerSecond = evt.delta / 1000;
-
-			console.log(this);
 
 		if (!createjs.Ticker.getPaused()) {
 			this.moveClouds(deltaPerSecond);
