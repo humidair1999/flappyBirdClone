@@ -1,10 +1,8 @@
-require([	'underscore',
-			'when',
+require([	'when',
 			'createjs',
 			'scenes/loading',
 			'scenes/game'],
-function(	_,
-			when,
+function(	when,
 			createjs,
 			LoadingScene,
 			GameScene) {
@@ -23,10 +21,15 @@ function(	_,
 	var initializeGame = function() {
 		clearStage();
 
+		// set the loading scene to null in order to assist with garbage collection
 		loadingScene = null;
 
-		FLAPPYSONIC.canvas.removeEventListener('click', initializeGame);
+		// remove the event listeners currently attached to the canvas; normally, these events
+		//	would be attached to an element within the stage, and would be removed as part of the
+		//	stage cleanup process
+		FLAPPYSONIC.canvas.element.removeEventListener('click', initializeGame);
 
+		// instantiate the second scene: the actual 'game' screen
 		var gameScene = new GameScene();
 
 		gameScene.attachAssets().then(function() {
@@ -36,7 +39,7 @@ function(	_,
 		}).then(function() {
 			gameScene.render();
 		}, function() {
-			console.log('something failed');
+			console.log('failed to instantiate game scene');
 		});
 	};
 
