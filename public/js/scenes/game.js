@@ -75,7 +75,7 @@ function(	_,
 			//	because they utilize two different sprite sheets and sets of metrics
 
 			that.sonic = new Sonic();
-			that.deadSonic = new DeadSonic(that.sonic.x, that.sonic.y);
+			that.deadSonic = new DeadSonic();
 
 			that.enemy1 = new Enemy(0);
 			that.enemy2 = new Enemy(that.enemy1.x);
@@ -173,30 +173,6 @@ function(	_,
 		return deferred.promise;
 	});
 
-	GameScene.prototype.endScene = _.once(function() {
-		var deferreds = [];
-
-		var fadeChild = function(element) {
-			var deferred = when.defer();
-
-			createjs.Tween.get(element).to({alpha:0}, 1000).call(function() {
-				console.log('done');
-
-				deferred.resolve();
-			});
-
-			return deferred.promise;
-		};
-
-		_.each(FLAPPYSONIC.stage.children, function(element) {
-			deferreds.push(fadeChild(element));
-		});
-
-		when.all(deferreds).then(function() {
-			window.location.reload(false);
-		});
-	});
-
 	GameScene.prototype.tick = function(evt) {
 		var that = this,
 			// convert delta from milliseconds into seconds
@@ -214,30 +190,6 @@ function(	_,
 
 			this.enemy1.tick(evt, deltaInSeconds, this.enemy2.x, this.enemy2.width, this.enemy2.xSpacing);
 			this.enemy2.tick(evt, deltaInSeconds, this.enemy1.x, this.enemy1.width, this.enemy1.xSpacing);
-
-			// intentionally slow the rate at which collisions are checked; again, for performance reasons
-			// time divided by change in time is evenly divisible by factor of 5
-			// if (Math.floor(evt.time / evt.delta % 5) === 0) {
-			// 	if (this.sonic.x >= (this.enemy1.x + this.enemy1.width) ||
-			// 		this.sonic.x >= (this.enemy2.x + this.enemy2.width)) {
-			// 		this.ui.playerScore.increaseScore();
-			// 	}
-
-			// 	if (this.enemy1.checkCollision(	this.sonic.x,
-			// 									this.sonic.width,
-			// 									this.sonic.y,
-			// 									this.sonic.height) ||
-			// 		this.enemy2.checkCollision(	this.sonic.x,
-			// 									this.sonic.width,
-			// 									this.sonic.y,
-			// 									this.sonic.height)) {
-			// 			this.handleDeath();
-			// 	}
-
-			// 	if (this.sonic.y + this.sonic.height >= FLAPPYSONIC.canvas.height) {
-			// 		this.handleDeath();
-			// 	}
-			// }
 
 			FLAPPYSONIC.stage.update(evt);
 		}
@@ -296,6 +248,30 @@ function(	_,
 			return that.deadSonic.plummet();
 		}).then(function() {
 			that.endScene();
+		});
+	});
+
+	GameScene.prototype.endScene = _.once(function() {
+		var deferreds = [];
+
+		var fadeChild = function(element) {
+			var deferred = when.defer();
+
+			createjs.Tween.get(element).to({alpha:0}, 1000).call(function() {
+				console.log('done');
+
+				deferred.resolve();
+			});
+
+			return deferred.promise;
+		};
+
+		_.each(FLAPPYSONIC.stage.children, function(element) {
+			deferreds.push(fadeChild(element));
+		});
+
+		when.all(deferreds).then(function() {
+			window.location.reload(false);
 		});
 	});
 

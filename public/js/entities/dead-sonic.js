@@ -24,26 +24,15 @@ function(	_,
 		}
 	});
 
-	var DeadSonic = function(sonicXPos, sonicYPos) {
+	var DeadSonic = function() {
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
-		this.x = sonicXPos + 10;
-		this.y = sonicYPos - 10;
+		
+		// we don't actually need to position dead sonic, as he will be positioned when
+		//	sonic dies and he's rendered to the stage
 
 		this.framerate = 1;
 	};
-
-	// don't have to override prototype because it's not an actual
-	//	createjs construct with a default initialize()
-
-	// var p = Button.prototype = new createjs.Container();
-	// Button.prototype.Container_initialize = p.initialize;
-	// Button.prototype.initialize = function(label) {
-	//     this.Container_initialize();
-	//     // add custom setup logic here.
-	// }
-
-	// TODO: why can't I proxy the fucking initialize() method here?
 
 	DeadSonic.prototype = new createjs.Sprite(dataDeadSonic, 'jump');
 
