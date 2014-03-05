@@ -34,7 +34,7 @@ function(	_,
 	GameScene.prototype.initialize = function() {
 		// play the background music as soon as the game is instantiated; the user needs
 		//	something to listen to while the rest of setup continues!
-		createjs.Sound.play('marbleZoneSong', createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
+		//createjs.Sound.play('marbleZoneSong', createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
 
 		// subscribe to various pubsub publishers
 		radio('sonic:tick').subscribe([this.hasHitGround, this]);
@@ -79,8 +79,11 @@ function(	_,
 			that.sonic = new Sonic();
 			that.deadSonic = new DeadSonic();
 
-			that.enemy1 = new Enemy(0);
-			that.enemy2 = new Enemy(that.enemy1.x);
+			// place the first enemy directly off-screen on instantiation, and place the second
+			//	behind it, based on the first's calculations
+
+			that.enemy1 = new Enemy(FLAPPYSONIC.canvas.width, false);
+			that.enemy2 = new Enemy((that.enemy1.x + that.enemy1.width), true);
 
 			that.ui.pauseButton = new PauseButton();
 
@@ -194,14 +197,14 @@ function(	_,
 	// functions for moving scenery/backdrops
 
 	GameScene.prototype.moveClouds = function(pixelsPerDelta) {
-		if (this.clouds1.x <= -this.clouds1.width){
+		if (this.clouds1.x <= -this.clouds1.width) {
 		    this.clouds1.x = this.clouds2.x + this.clouds2.width;
 		}
 		else {
 	 		this.clouds1.x -= pixelsPerDelta;
 		}
 
-		if (this.clouds2.x <= -this.clouds2.width){
+		if (this.clouds2.x <= -this.clouds2.width) {
 		    this.clouds2.x = this.clouds1.x + this.clouds1.width;
 		}
 		else {
@@ -210,14 +213,16 @@ function(	_,
 	};
 
 	GameScene.prototype.moveGround = function(pixelsPerDelta) {
-		if (this.ground1.x <= -this.ground1.width){
+		if (this.ground1.x <= -this.ground1.width) {
+			// push the ground just a tiny bit left after moving it, because a little overlap
+			//	in the ground pieces is better than having a weird tiny gap
 		    this.ground1.x = this.ground2.x + this.ground2.width - 4;
 		}
 		else {
 	 		this.ground1.x -= pixelsPerDelta;
 		}
 
-		if (this.ground2.x <= -this.ground2.width){
+		if (this.ground2.x <= -this.ground2.width) {
 		    this.ground2.x = this.ground1.x + this.ground1.width - 4;
 		}
 		else {

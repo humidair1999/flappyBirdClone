@@ -25,13 +25,13 @@ function(	_,
 		}
 	});
 
-	var Enemy = function(xPos) {
+	var Enemy = function(xPos, addXSpacing) {
 		this.width = this.getBounds().width;
 		this.height = this.getBounds().height;
 
 		this.xSpacing = 225;
 
-		this.x = xPos + this.xSpacing;
+		this.x = addXSpacing ? (xPos + this.xSpacing) : xPos;
 		this.y = this.generateRandomYPos();
 
 		// TODO: give enemy some sort of more accurate hitbox?
@@ -66,8 +66,6 @@ function(	_,
 	};
 
 	Enemy.prototype.hasCollided = function(sonicXPos, sonicYPos, sonicWidth, sonicHeight) {
-		console.log('collided with sonic: ', this.x);
-
 		// right-side collision: if sonic is past the right edge of the enemy,
 		if (sonicXPos >= this.x + this.width ||
 			// left-side collision: if sonic is past the left edge of the enemy,
@@ -76,11 +74,9 @@ function(	_,
 			sonicYPos >= this.y + this.height ||
 			// and top collision: if sonic is above the enemy
 			sonicYPos + sonicHeight <= this.y ) {
-			console.log('has not collided');
+			
 		}
 		else {
-			console.log('has collided');
-
 			radio('sonic:collided').broadcast();
 		}
 	};
