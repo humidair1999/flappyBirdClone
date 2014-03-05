@@ -46,6 +46,8 @@ function(	_,
 	Sonic.prototype.initialize = function() {
 		// subscribe to various pubsub publishers
 		radio('sonic:collided').subscribe([this.die, this]);
+
+		radio('player:click').subscribe([this.flyUp, this]);
 	};
 
 	Sonic.prototype.glideDown = function(pixelsPerDelta) {

@@ -9,6 +9,18 @@ function(	_,
 
 	'use strict';
 
+	// function definitions to be used as event listener callbacks
+
+	var publishPlayerClick = function() {
+		radio('player:click').broadcast();
+	};
+
+	var publishPlayerPause = function() {
+		radio('player:pause').broadcast();
+	};
+
+	// scene constructor
+
 	var GameScene = function() {
 		// define an empty hash for ui buttons and controls
 		this.ui = {};
@@ -82,22 +94,12 @@ function(	_,
 		return deferred.promise;
 	};
 
-	// memoize a reference to these proxied listeners so that both the attachers and removers have access
-	//	to the exact same proxies
-	GameScene.prototype.generateListenerProxies = _.memoize(function() {
-		return {
-			flyUpProxy: createjs.proxy(this.sonic.flyUp, this.sonic),
-			togglePauseProxy: createjs.proxy(this.ui.pauseButton.togglePause, this.ui.pauseButton)
-		};
-	});
-
 	GameScene.prototype.attachListeners = function() {
-		var listenerProxies = this.generateListenerProxies(),
-			deferred = when.defer();
+		var deferred = when.defer();
 
-		FLAPPYSONIC.canvas.element.addEventListener('click', listenerProxies.flyUpProxy);
+		FLAPPYSONIC.canvas.element.addEventListener('click', publishPlayerClick);
 
-		this.ui.pauseButton.addEventListener('click', listenerProxies.togglePauseProxy);
+		this.ui.pauseButton.addEventListener('click', publishPlayerPause);
 
 		deferred.resolve();
 
@@ -105,11 +107,9 @@ function(	_,
 	};
 
 	GameScene.prototype.removeListeners = function() {
-		var listenerProxies = this.generateListenerProxies();
+		FLAPPYSONIC.canvas.element.removeEventListener('click', publishPlayerClick);
 
-		FLAPPYSONIC.canvas.element.removeEventListener('click', listenerProxies.flyUpProxy);
-
-		this.ui.pauseButton.removeEventListener('click', listenerProxies.togglePauseProxy);
+		this.ui.pauseButton.removeEventListener('click', publishPlayerPause);
 
 		FLAPPYSONIC.stage.removeChild(this.ui.pauseButton);
 
@@ -173,55 +173,29 @@ function(	_,
 		return deferred.promise;
 	});
 
-	GameScene.prototype.moveClouds = function(pixelsPerDelta) {
-		if (this.clouds1.x <= -this.clouds1.width){
-		    this.clouds1.x = this.clouds2.x + this.clouds2.width;
-		}
-		else {
-	 		this.clouds1.x -= pixelsPerDelta;
-		}
+	GameScene.prototype.endScene = _.once(function() {
+		var deferreds = [];
 
-		if (this.clouds2.x <= -this.clouds2.width){
-		    this.clouds2.x = this.clouds1.x + this.clouds1.width;
-		}
-		else {
-			this.clouds2.x -= pixelsPerDelta;
-		}
-	};
+		var fadeChild = function(element) {
+			var deferred = when.defer();
 
-	GameScene.prototype.moveGround = function(pixelsPerDelta) {
-		if (this.ground1.x <= -this.ground1.width){
-		    this.ground1.x = this.ground2.x + this.ground2.width - 4;
-		}
-		else {
-	 		this.ground1.x -= pixelsPerDelta;
-		}
+			createjs.Tween.get(element).to({alpha:0}, 1000).call(function() {
+				console.log('done');
 
-		if (this.ground2.x <= -this.ground2.width){
-		    this.ground2.x = this.ground1.x + this.ground1.width - 4;
-		}
-		else {
-			this.ground2.x -= pixelsPerDelta;
-		}
-	};
+				deferred.resolve();
+			});
 
-	GameScene.prototype.handleDeath = _.once(function() {
-		var that = this;
+			return deferred.promise;
+		};
 
-		this.removeListeners();
+		_.each(FLAPPYSONIC.stage.children, function(element) {
+			deferreds.push(fadeChild(element));
+		});
 
-		this.renderDeadSonic().then(function(deadSonic) {
-			return that.deadSonic.plummet();
-		}).then(function() {
-			that.endScene();
+		when.all(deferreds).then(function() {
+			window.location.reload(false);
 		});
 	});
-
-	GameScene.prototype.hasHitGround = function(sonicXPos, sonicYPos, sonicWidth, sonicHeight) {
-		if (sonicYPos + sonicHeight >= FLAPPYSONIC.canvas.height) {
-			radio('sonic:collided').broadcast();
-		}
-	};
 
 	GameScene.prototype.tick = function(evt) {
 		var that = this,
@@ -269,31 +243,61 @@ function(	_,
 		}
 	};
 
-	GameScene.prototype.endScene = _.once(function() {
-		var deferreds = [];
+	// functions for moving scenery/backdrops
 
-		var fadeChild = function(element) {
-			var deferred = when.defer();
+	GameScene.prototype.moveClouds = function(pixelsPerDelta) {
+		if (this.clouds1.x <= -this.clouds1.width){
+		    this.clouds1.x = this.clouds2.x + this.clouds2.width;
+		}
+		else {
+	 		this.clouds1.x -= pixelsPerDelta;
+		}
 
-			createjs.Tween.get(element).to({alpha:0}, 1000).call(function() {
-				console.log('done');
+		if (this.clouds2.x <= -this.clouds2.width){
+		    this.clouds2.x = this.clouds1.x + this.clouds1.width;
+		}
+		else {
+			this.clouds2.x -= pixelsPerDelta;
+		}
+	};
 
-				deferred.resolve();
-			});
+	GameScene.prototype.moveGround = function(pixelsPerDelta) {
+		if (this.ground1.x <= -this.ground1.width){
+		    this.ground1.x = this.ground2.x + this.ground2.width - 4;
+		}
+		else {
+	 		this.ground1.x -= pixelsPerDelta;
+		}
 
-			return deferred.promise;
-		};
+		if (this.ground2.x <= -this.ground2.width){
+		    this.ground2.x = this.ground1.x + this.ground1.width - 4;
+		}
+		else {
+			this.ground2.x -= pixelsPerDelta;
+		}
+	};
+ 
+	// pubsub callbacks
 
-		_.each(FLAPPYSONIC.stage.children, function(element) {
-			deferreds.push(fadeChild(element));
-		});
+	// since scenery is considered inanimate objects that don't directly interact with
+	//	player, the scene handles interactions with them
+	GameScene.prototype.hasHitGround = function(sonicXPos, sonicYPos, sonicWidth, sonicHeight) {
+		if (sonicYPos + sonicHeight >= FLAPPYSONIC.canvas.height) {
+			radio('sonic:collided').broadcast();
+		}
+	};
 
-		when.all(deferreds).then(function() {
-			window.location.reload(false);
+	GameScene.prototype.handleDeath = _.once(function() {
+		var that = this;
+
+		this.removeListeners();
+
+		this.renderDeadSonic().then(function(deadSonic) {
+			return that.deadSonic.plummet();
+		}).then(function() {
+			that.endScene();
 		});
 	});
- 
-	// TODO: subscribe to enemy's collision occurring
 
 	return GameScene;
 
