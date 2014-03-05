@@ -1,9 +1,11 @@
 define([	'underscore',
 			'when',
-			'createjs'],
+			'createjs',
+			'radio'],
 function(	_,
 			when,
-			createjs) {
+			createjs,
+			radio) {
 
 	'use strict';
 
@@ -21,6 +23,11 @@ function(	_,
 		// play the background music as soon as the game is instantiated; the user needs
 		//	something to listen to while the rest of setup continues!
 		createjs.Sound.play('marbleZoneSong', createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
+
+		// subscribe to various pubsub publishers
+		radio('sonic:tick').subscribe([this.hasHitGround, this]);
+
+		radio('sonic:collided').subscribe([this.handleDeath, this]);
 	};
 
 	GameScene.prototype.attachAssets = function() {
@@ -203,14 +210,18 @@ function(	_,
 
 		this.removeListeners();
 
-		this.sonic.die();
-
 		this.renderDeadSonic().then(function(deadSonic) {
 			return that.deadSonic.plummet();
 		}).then(function() {
 			that.endScene();
 		});
 	});
+
+	GameScene.prototype.hasHitGround = function(sonicXPos, sonicYPos, sonicWidth, sonicHeight) {
+		if (sonicYPos + sonicHeight >= FLAPPYSONIC.canvas.height) {
+			radio('sonic:collided').broadcast();
+		}
+	};
 
 	GameScene.prototype.tick = function(evt) {
 		var that = this,

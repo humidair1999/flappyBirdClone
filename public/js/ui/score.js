@@ -1,9 +1,11 @@
 define([	'underscore',
 			'when',
-			'createjs'],
+			'createjs',
+			'radio'],
 function(	_,
 			when,
-			createjs) {
+			createjs,
+			radio) {
 
 	'use strict';
 
@@ -16,26 +18,19 @@ function(	_,
 		this.score = 0;
 
 		this.text = this.score;
+
+		this.initialize();
 	};
-
-	// don't have to override prototype because it's not an actual
-	//	createjs construct with a default initialize()
-
-	// var p = Button.prototype = new createjs.Container();
-	// Button.prototype.Container_initialize = p.initialize;
-	// Button.prototype.initialize = function(label) {
-	//     this.Container_initialize();
-	//     // add custom setup logic here.
-	// }
-
-	// TODO: why can't I proxy the fucking initialize() method here?
 
 	PlayerScore.prototype = new createjs.Text(' ', 'bold 24px Helvetica', '#FFFFFF');
 
+	PlayerScore.prototype.initialize = function() {
+		// subscribe to various pubsub publishers
+		radio('sonic:scored').subscribe([this.increaseScore, this]);
+	};
+
 	// TODO: calculate time elapsed since enemy passed certain point
 	PlayerScore.prototype.increaseScore = _.throttle(function() {
-		console.log('increase');
-
 		this.score += 1;
 
 		this.text = this.score;

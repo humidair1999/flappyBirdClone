@@ -65,41 +65,38 @@ function(	_,
 		}
 	};
 
-	Enemy.prototype.playCrash = _.once(function() {
-		createjs.Sound.play('crash', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
-	});
-
-	Enemy.prototype.hasCollided = function(sonicXPos, sonicWidth, sonicYPos, sonicHeight) {
+	Enemy.prototype.hasCollided = function(sonicXPos, sonicYPos, sonicWidth, sonicHeight) {
 		console.log('collided with sonic: ', this.x);
 
 		// right-side collision: if sonic is past the right edge of the enemy,
-		// if (sonicXPos >= this.x + this.width ||
-		// 	// left-side collision: if sonic is past the left edge of the enemy,
-		// 	sonicXPos + sonicWidth <= this.x ||
-		// 	// bottom collision: if sonic is underneath the enemy,
-		// 	sonicYPos >= this.y + this.height ||
-		// 	// and top collision: if sonic is above the enemy
-		// 	sonicYPos + sonicHeight <= this.y ) {
-		// 	return false;
-		// }
-		// else {
-		// 	this.playCrash();
+		if (sonicXPos >= this.x + this.width ||
+			// left-side collision: if sonic is past the left edge of the enemy,
+			sonicXPos + sonicWidth <= this.x ||
+			// bottom collision: if sonic is underneath the enemy,
+			sonicYPos >= this.y + this.height ||
+			// and top collision: if sonic is above the enemy
+			sonicYPos + sonicHeight <= this.y ) {
+			console.log('has not collided');
+		}
+		else {
+			console.log('has collided');
 
-		// 	return true;
-		// }
+			radio('sonic:collided').broadcast();
+		}
 	};
 
-	Enemy.prototype.hasPassed = function() {
-		console.log('passed sonic: ', this.x);
+	// we're ignoring every parameter except sonic's x position here, because we simply don't
+	//	need his other metrics
+	Enemy.prototype.hasPassed = function(sonicXPos) {
+		// if sonic has passed by the current enemy, broadcast a 'scored' event
+		if (sonicXPos >= (this.x + this.width)) {
+			radio('sonic:scored').broadcast();
+		}
 	};
 
 	Enemy.prototype.tick = function(evt, deltaInSeconds, oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing) {
 		this.move((deltaInSeconds * 40), oppositeEnemyXPos, oppositeEnemyWidth, oppositeEnemyXSpacing);
 	};
-
-	// TODO: subscribe to sonic's movements
-
-	// TODO: broadcast that a collision occurred
  
 	return Enemy;
 

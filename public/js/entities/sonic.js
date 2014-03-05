@@ -37,9 +37,16 @@ function(	_,
 		this.y = 50;
 
 		this.framerate = 2;
+
+		this.initialize();
 	};
 
 	Sonic.prototype = new createjs.Sprite(dataSonic, 'straight');
+
+	Sonic.prototype.initialize = function() {
+		// subscribe to various pubsub publishers
+		radio('sonic:collided').subscribe([this.die, this]);
+	};
 
 	Sonic.prototype.glideDown = function(pixelsPerDelta) {
 		this.y += pixelsPerDelta;
@@ -75,6 +82,8 @@ function(	_,
 
 	// Sonic can only ever die once, so let's utilize the die() method as a singleton
 	Sonic.prototype.die = _.once(function() {
+		createjs.Sound.play('crash', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
+
 		this.gotoAndPlay('empty');
 	});
 
@@ -85,7 +94,7 @@ function(	_,
 		//	performance reasons
 		// (time) divided by (change in time) is evenly divisible by factor of 5
 		if (Math.floor(evt.time / evt.delta % 5) === 0) {
-			radio('sonic:tick').broadcast('haha');
+			radio('sonic:tick').broadcast(this.x, this.y, this.width, this.height);
 		}
 	};
 
