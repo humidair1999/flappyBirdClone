@@ -62,18 +62,14 @@ function(	createjs,
 	};
 
 	Enemy.prototype.hasCollided = function(sonicXPos, sonicYPos, sonicWidth, sonicHeight) {
-		// right-side collision: if sonic is past the right edge of the enemy,
-		if (sonicXPos >= this.x + this.width ||
-			// left-side collision: if sonic is past the left edge of the enemy,
-			sonicXPos + sonicWidth <= this.x ||
-			// bottom collision: if sonic is underneath the enemy,
-			sonicYPos >= this.y + this.height ||
-			// and top collision: if sonic is above the enemy
-			sonicYPos + sonicHeight <= this.y) {
-			// do nothing! any of the above conditions being true means that sonic still isn't
-			//	overlapping an enemy on at least one edge
-		}
-		else {
+		// if sonic's left edge is NOT past the right edge of the enemy,
+		if (!(sonicXPos >= this.x + this.width) &&
+			// AND sonic's right edge is NOT past the left edge of the enemy,
+			!(sonicXPos + sonicWidth <= this.x) &&
+			// AND sonic's top edge is NOT past the bottom edge of the enemy,
+			!(sonicYPos >= this.y + this.height) &&
+			// AND sonic's bottom edge is NOT past the top edge of the enemy
+			!(sonicYPos + sonicHeight <= this.y)) {
 			radio('sonic:collided').broadcast();
 		}
 	};
