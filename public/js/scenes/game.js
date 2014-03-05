@@ -34,7 +34,7 @@ function(	_,
 	GameScene.prototype.initialize = function() {
 		// play the background music as soon as the game is instantiated; the user needs
 		//	something to listen to while the rest of setup continues!
-		//createjs.Sound.play('marbleZoneSong', createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
+		createjs.Sound.play('marbleZoneSong', createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
 
 		// subscribe to various pubsub publishers
 		radio('sonic:tick').subscribe([this.hasHitGround, this]);

@@ -34,6 +34,10 @@ function(	createjs,
 
 		this.framerate = Math.floor((Math.random() * 8) + 1);
 
+		// since we're reusing the same few enemies, we need a boolean to track whether the
+		//	player has already passed each one, so we can reset the flag when they 'respawn'
+		this.canIncreaseScore = true;
+
 		this.initialize();
 	};
 
@@ -55,6 +59,8 @@ function(	createjs,
 		    this.x = (oppositeEnemyXPos + oppositeEnemyWidth) + oppositeEnemyXSpacing;
 
 		    this.y = this.generateRandomYPos();
+
+		    this.canIncreaseScore = true;
 		}
 		else {
 			this.x -= pixelsPerDelta;
@@ -77,8 +83,11 @@ function(	createjs,
 	// we're ignoring every parameter except sonic's x position here, because we simply don't
 	//	need his other metrics
 	Enemy.prototype.hasPassed = function(sonicXPos) {
-		// if sonic has passed by the current enemy, broadcast a 'scored' event
-		if (sonicXPos >= (this.x + this.width)) {
+		// if sonic has passed by the current enemy (and hasn't already done so), broadcast
+		//	a 'scored' event
+		if ((sonicXPos >= (this.x + this.width)) && this.canIncreaseScore) {
+			this.canIncreaseScore = false;
+
 			radio('sonic:scored').broadcast();
 		}
 	};

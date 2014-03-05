@@ -1,8 +1,6 @@
-define([	'underscore',
-			'createjs',
+define([	'createjs',
 			'radio'],
-function(	_,
-			createjs,
+function(	createjs,
 			radio) {
 
 	'use strict';
@@ -28,16 +26,13 @@ function(	_,
 	};
 
 	// TODO: calculate time elapsed since enemy passed certain point
-	PlayerScore.prototype.increaseScore = _.throttle(function() {
+	PlayerScore.prototype.increaseScore = function() {
 		this.score += 1;
 
 		this.text = this.score;
 
 		// TODO: trigger stage update?
-	}, 3000, {
-		leading: true,
-		trailing: false
-	});
+	};
  
 	return PlayerScore;
 
