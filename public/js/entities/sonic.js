@@ -36,6 +36,8 @@ function(	_,
 		this.x = 50;
 		this.y = 50;
 
+		// TODO: scale framerate based on framerate of ticker
+
 		this.framerate = 2;
 
 		this.initialize();

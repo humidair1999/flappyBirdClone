@@ -86,10 +86,6 @@ function(	_,
 
 			that.ui.playerScore = new PlayerScore();
 
-			// TODO: remove this once canvas is proper size
-			that.ui.barrierWall = new createjs.Shape();
-			that.ui.barrierWall.graphics.beginFill("#ffffff").drawRect(319, 0, 1, 288);
-
 			deferred.resolve();
 		});
 
@@ -151,8 +147,7 @@ function(	_,
 									this.enemy2,
 									this.sonic,
 									this.ui.pauseButton,
-									this.ui.playerScore,
-									this.ui.barrierWall);
+									this.ui.playerScore);
 
 		FLAPPYSONIC.stage.update();
 	};
@@ -176,9 +171,8 @@ function(	_,
 	});
 
 	GameScene.prototype.tick = function(evt) {
-		var that = this,
-			// convert delta from milliseconds into seconds
-			deltaInSeconds = evt.delta / 1000;
+		// convert delta from milliseconds into seconds
+		var deltaInSeconds = evt.delta / 1000;
 
 		if (!createjs.Ticker.getPaused()) {
 			// every delta (or 'change event'), move a fraction of total pixels per second
@@ -256,18 +250,20 @@ function(	_,
 			var deferred = when.defer();
 
 			createjs.Tween.get(element).to({alpha:0}, 1000).call(function() {
-				console.log('done');
-
 				deferred.resolve();
 			});
 
 			return deferred.promise;
 		};
 
+		// for every item on the stage, execute the fadeChild function and push its resultant
+		//	resolved deferred into the deferreds array
 		_.each(FLAPPYSONIC.stage.children, function(element) {
 			deferreds.push(fadeChild(element));
 		});
 
+		// when every item has been successfully faded, refresh the browser, effectively
+		//	restarting the game
 		when.all(deferreds).then(function() {
 			window.location.reload(false);
 		});

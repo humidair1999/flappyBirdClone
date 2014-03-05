@@ -1,8 +1,6 @@
-define([	'underscore',
-			'when',
+define([	'when',
 			'createjs'],
-function(	_,
-			when,
+function(	when,
 			createjs) {
 
 	'use strict';
