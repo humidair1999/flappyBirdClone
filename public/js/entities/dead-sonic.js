@@ -1,9 +1,11 @@
 define([	'underscore',
 			'when',
-			'createjs'],
+			'createjs',
+			'radio'],
 function(	_,
 			when,
-			createjs) {
+			createjs,
+			radio) {
 
 	'use strict';
 
@@ -32,13 +34,18 @@ function(	_,
 		//	sonic dies and he's rendered to the stage
 
 		this.framerate = 1;
+
+		this.initialize();
 	};
 
 	DeadSonic.prototype = new createjs.Sprite(dataDeadSonic, 'jump');
 
-	DeadSonic.prototype.plummet = _.once(function() {
-		var deferred = when.defer();
+	DeadSonic.prototype.initialize = function() {
+		// subscribe to various pubsub publishers
+		radio('deadSonic:rendered').subscribe([this.plummet, this]);
+	};
 
+	DeadSonic.prototype.plummet = _.once(function() {
 		if (!createjs.Ticker.getPaused()) {
 			createjs.Tween.get(this, { override: true })
 				.to({ y: (this.y - 40) }, 300, createjs.Ease.getPowIn(2.2))
@@ -48,11 +55,9 @@ function(	_,
 				.call(function() {
 					createjs.Sound.play('die', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
 
-					deferred.resolve();
+					radio('deadSonic:finished').broadcast();
 				});
 		}
-
-		return deferred.promise;
 	});
  
 	return DeadSonic;

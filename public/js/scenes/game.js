@@ -40,6 +40,8 @@ function(	_,
 		radio('sonic:tick').subscribe([this.hasHitGround, this]);
 
 		radio('sonic:collided').subscribe([this.handleDeath, this]);
+
+		radio('deadSonic:finished').subscribe([this.endScene, this]);
 	};
 
 	GameScene.prototype.attachAssets = function() {
@@ -240,14 +242,10 @@ function(	_,
 	};
 
 	GameScene.prototype.handleDeath = _.once(function() {
-		var that = this;
-
 		this.removeListeners();
 
-		this.renderDeadSonic().then(function(deadSonic) {
-			return that.deadSonic.plummet();
-		}).then(function() {
-			that.endScene();
+		this.renderDeadSonic().then(function() {
+			radio('deadSonic:rendered').broadcast();
 		});
 	});
 
