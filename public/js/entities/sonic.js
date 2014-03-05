@@ -1,9 +1,7 @@
 define([	'underscore',
-			'when',
 			'createjs',
 			'radio'],
 function(	_,
-			when,
 			createjs,
 			radio) {
 
@@ -90,7 +88,7 @@ function(	_,
 		// intentionally slow the rate at which sonic broadcasts his movements; again, for
 		//	performance reasons
 		// (time) divided by (change in time) is evenly divisible by factor of 5
-		if (Math.floor(evt.time / evt.delta % 5) === 0) {
+		if (Math.floor((evt.time / evt.delta) % 4) === 0) {
 			radio('sonic:tick').broadcast(this.x, this.y, this.width, this.height);
 		}
 	};

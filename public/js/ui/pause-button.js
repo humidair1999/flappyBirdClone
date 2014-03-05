@@ -18,7 +18,7 @@ function(	createjs,
 		radio('player:pause').subscribe([this.togglePause, this]);
 	};
 
-	PauseButton.prototype.togglePause = function(evt) {
+	PauseButton.prototype.togglePause = function() {
 		createjs.Ticker.setPaused(!createjs.Ticker.getPaused());
 	};
  
