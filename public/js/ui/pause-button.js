@@ -1,16 +1,12 @@
-define([	'underscore',
-			'when',
-			'createjs',
+define([	'createjs',
 			'radio'],
-function(	_,
-			when,
-			createjs,
+function(	createjs,
 			radio) {
 
 	'use strict';
 
 	var PauseButton = function() {
-		this.graphics.beginFill("#ff0000").drawRect(FLAPPYSONIC.canvas.width - 40, 10, 30, 30);
+		this.graphics.beginFill("#6D6D6D").drawRect(FLAPPYSONIC.canvas.width - 40, 10, 30, 30);
 
 		this.initialize();
 	};

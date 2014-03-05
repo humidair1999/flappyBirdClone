@@ -1,9 +1,7 @@
 define([	'underscore',
-			'when',
 			'createjs',
 			'radio'],
 function(	_,
-			when,
 			createjs,
 			radio) {
 
