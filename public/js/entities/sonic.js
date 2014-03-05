@@ -57,8 +57,8 @@ function(	_,
 	// TODO: might be nice to wrap() ticker getPaused() checks in some sort of reusable
 	//	function
 
-	Sonic.prototype.flyUp = function(evt) {
-		var that = this;
+	Sonic.prototype.flyUp = function() {
+		var newYPos = (this.y <= 70) ? 0 : (this.y - 70);
 
 		if (!createjs.Ticker.getPaused()) {
 			this.gotoAndPlay('up');
@@ -66,14 +66,7 @@ function(	_,
 			createjs.Sound.play('flap', createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.8, 0);
 
 			createjs.Tween.get(this, { override: true })
-				.to({ y: (function() {
-					if (that.y <= 70) {
-						return 0;
-					}
-					else {
-						return that.y - 70;
-					}
-				})()}, 700, createjs.Ease.cubicInOut)
+				.to({ y: newYPos }, 700, createjs.Ease.cubicInOut)
 				.call(function() {
 					if (this.currentAnimation !== 'empty') {
 						this.gotoAndPlay('down');
@@ -99,8 +92,6 @@ function(	_,
 			radio('sonic:tick').broadcast(this.x, this.y, this.width, this.height);
 		}
 	};
-
-	// TODO: broadcast movements
  
 	return Sonic;
 
