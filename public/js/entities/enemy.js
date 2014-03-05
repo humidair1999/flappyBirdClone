@@ -1,10 +1,6 @@
-define([	'underscore',
-			'when',
-			'createjs',
+define([	'createjs',
 			'radio'],
-function(	_,
-			when,
-			createjs,
+function(	createjs,
 			radio) {
 
 	'use strict';
@@ -73,8 +69,9 @@ function(	_,
 			// bottom collision: if sonic is underneath the enemy,
 			sonicYPos >= this.y + this.height ||
 			// and top collision: if sonic is above the enemy
-			sonicYPos + sonicHeight <= this.y ) {
-			
+			sonicYPos + sonicHeight <= this.y) {
+			// do nothing! any of the above conditions being true means that sonic still isn't
+			//	overlapping an enemy on at least one edge
 		}
 		else {
 			radio('sonic:collided').broadcast();

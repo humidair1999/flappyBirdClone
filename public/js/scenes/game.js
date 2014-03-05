@@ -235,7 +235,7 @@ function(	_,
 	// since scenery is considered inanimate objects that don't directly interact with
 	//	player, the scene handles interactions with them
 	GameScene.prototype.hasHitGround = function(sonicXPos, sonicYPos, sonicWidth, sonicHeight) {
-		if (sonicYPos + sonicHeight >= FLAPPYSONIC.canvas.height) {
+		if ((sonicYPos + sonicHeight) >= FLAPPYSONIC.canvas.height) {
 			radio('sonic:collided').broadcast();
 		}
 	};
