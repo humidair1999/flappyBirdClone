@@ -28,24 +28,34 @@ accomplished some of the same things I have, but using different tactics.
 ---
 
 
+#### How to run
+
+
+Just clone this repo and fire up **server.js** using Node or a Node daemon like Supervisor or Nodemon.
+Then, navigate to your localhost.
+
+
+---
+
+
 #### Best Practices and Goals
 
 
-- Utilize a module loader. It's inexcusable to NOT use one in this day and age. We'll use RequireJS for
+- **Utilize a module loader.** It's inexcusable to NOT use one in this day and age. We'll use RequireJS for
 this purpose.
 
-- Separate concerns. Scenes should instantiate objects and control non-interactive scenery, but interactive
-elements should handle themselves and interact in a decoupled manner. This is where Radio.js as a pubsub
-aggregator comes in.
+- **Separate concerns.** Scenes should instantiate objects and control non-interactive scenery, but
+interactive elements should handle themselves and interact in a decoupled manner. This is where Radio.js
+as a pubsub aggregator comes in.
 
-- Minimize use of one-off boolean flags. It becomes messy to keep track of flags on objects all over the
-place. By more cleverly utilizing singleton-styled methods and other structures provided by underscore,
+- **Minimize use of one-off boolean flags.** It becomes messy to keep track of flags on objects all over
+the place. By more cleverly utilizing singleton-styled methods and other structures provided by underscore,
 we can reduce the number of these flags while still making our code easily readable.
 
-- Use deferreds. Chain methods as needed to create proper execution flow in our program; we want to clearly
-define what needs to occur before the program can continue executing.
+- **Use deferreds.** Chain methods as needed to create proper execution flow in our program; we want to
+clearly define what needs to occur before the program can continue executing.
 
-- Keep it in the canvas! In preparation for a migration to CocoonJS or another mobile execution
+- **Keep it in the canvas!** In preparation for a migration to CocoonJS or another mobile execution
 environment, we want to completely eliminate any DOM elements from the game. Every UI element and game
 object should be contained within the canvas stage.
 
