@@ -1,3 +1,6 @@
+![flappy sonic screenshot](screenshot.png)
+
+
 # flappyBirdClone
 
 #### A Flappy Bird clone written using CreateJS, RequireJS, whenjs, underscore, and Radio.js
