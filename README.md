@@ -2,7 +2,7 @@
 
 # flappyBirdClone
 
-#### A Flappy Bird clone written using CreateJS, RequireJS, whenjs, underscore, and Radio.js
+#### A Flappy Bird clone written using CreateJS, RequireJS, whenjs, underscore.js, and Radio.js
 
 
 ---
@@ -48,3 +48,13 @@ define what needs to occur before the program can continue executing.
 - Keep it in the canvas! In preparation for a migration to CocoonJS or another mobile execution
 environment, we want to completely eliminate any DOM elements from the game. Every UI element and game
 object should be contained within the canvas stage.
+
+
+---
+
+
+#### Please note
+
+
+This is mostly a proof-of-concept and example to get you up-and-running. It runs best in Chrome, and is
+almost certainly not bug-free or cross-browser compatible.
